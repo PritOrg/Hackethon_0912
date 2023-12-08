@@ -1,0 +1,65 @@
+User
+const User = {
+  id: String,
+  username: String,
+  email: String,
+  password: String, // Hashed password
+  role: String, // Role (e.g., employee, manager, admin)
+  createdAt: Date,
+};
+
+---------------------------------------------------------------------------------
+Leave Request
+const LeaveRequest = {
+  id: String,
+  userId: String, // User making the request
+  startDate: Date,
+  endDate: Date,
+  status: String, // Pending, Approved, Rejected, etc.
+  reason: String,
+  createdAt: Date,
+};
+
+---------------------------------------------------------------------------------
+Leave Balance
+const LeaveBalance = {
+  id: String,
+  userId: String,
+  annualLeave: Number,
+  sickLeave: Number,
+  // Add more leave types as needed
+  createdAt: Date,
+};
+
+----------------------------------------------------------------------------------
+Holiday Object
+const Holiday = {
+  id: String,
+  name: String,
+  date: Date,
+  createdAt: Date,
+};
+
+-----------------------------------------------------------------------------------------
+Approval Object
+const Approval = {
+  id: String,
+  leaveRequestId: String,
+  approverId: String, // User ID of the approver
+  status: String, // Approved, Rejected, Pending, etc.
+  comments: String,
+  createdAt: Date,
+};
+
+----------------------------------------------------------------------------------------
+Notification
+const Notification = {
+  id: String,
+  userId: String,
+  message: String,
+  isRead: Boolean,
+  createdAt: Date,
+};
+
+
+---------------------------------------------------------------------------------------
