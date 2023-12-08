@@ -6,6 +6,7 @@ const User = {
   password: String, // Hashed password
   role: String, // Role (e.g., employee, manager, admin)
   createdAt: Date,
+  monthly salary: Number
 };
 
 ---------------------------------------------------------------------------------
@@ -17,7 +18,7 @@ const LeaveRequest = {
   endDate: Date,
   status: String, // Pending, Approved, Rejected, etc.
   reason: String,
-  createdAt: Date,
+  createdAt: Date
 };
 
 ---------------------------------------------------------------------------------
@@ -26,9 +27,9 @@ const LeaveBalance = {
   id: String,
   userId: String,
   annualLeave: Number,
-  sickLeave: Number,
-  // Add more leave types as needed
-  createdAt: Date,
+  sickLeave: Number, 
+  // Add more leave types as needed & dropdown for selecting type of leave.
+  createdAt: Date
 };
 
 ----------------------------------------------------------------------------------
@@ -37,7 +38,7 @@ const Holiday = {
   id: String,
   name: String,
   date: Date,
-  createdAt: Date,
+  createdAt: Date
 };
 
 -----------------------------------------------------------------------------------------
@@ -48,7 +49,7 @@ const Approval = {
   approverId: String, // User ID of the approver
   status: String, // Approved, Rejected, Pending, etc.
   comments: String,
-  createdAt: Date,
+  createdAt: Date
 };
 
 ----------------------------------------------------------------------------------------
@@ -58,7 +59,7 @@ const Notification = {
   userId: String,
   message: String,
   isRead: Boolean,
-  createdAt: Date,
+  createdAt: Date
 };
 
 
