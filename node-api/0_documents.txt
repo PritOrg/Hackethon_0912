@@ -6,7 +6,7 @@ const User = {
   password: String, // Hashed password
   role: String, // Role (e.g., employee, manager, admin)
   createdAt: Date,
-  monthly salary: Number
+  monthlySalary: Number
 };
 
 ---------------------------------------------------------------------------------
