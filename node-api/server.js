@@ -38,7 +38,28 @@ mongoose.connect(conStr).then(
             }
         })
 
-        // adding data of employee object
+        // adding data of LeaveRequest object
+        app.post('/leave-requests', async (req, res) => {
+            try {
+                const leaveRequest = req.body;
+            
+                // Generate a new ObjectId
+                const objectId = new ObjectId();
+            
+                // Add the generated ObjectId to the employeeData
+                leaveRequest._id = objectId;
+            
+                const newLeaveRequest = new LeaveRequest(leaveRequest);
+            
+                await newLeaveRequest.save();
+                res.status(201).json(newLeaveRequest);
+              } catch (error) {
+                console.error('Error:', error);
+                res.status(500).json({ error: 'Internal Server Error' });
+              }
+        });
+
+        // adding data of  object
         app.post('/employee', async (req, res) => {
             try {
                 const employeeData = req.body;
