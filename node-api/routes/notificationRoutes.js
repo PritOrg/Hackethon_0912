@@ -1,15 +1,9 @@
-<<<<<<< Updated upstream
-holidayRoutes
 
-
-
-=======
->>>>>>> Stashed changes
 const express = require('express');
 const router = express.Router();
 const { Types } = require('mongoose');
 const { ObjectId } = Types;
-const Notification = require('../schemas/holiday');
+const Notification = require('../schemas/notification');
 
 // getAll for Notification Object
 router.get('/', async (req, res) => {
@@ -24,7 +18,7 @@ router.get('/', async (req, res) => {
 });
 
 //get By id
-app.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
       const id = req.params.id;
 
@@ -34,7 +28,7 @@ app.get('/:id', async (req, res) => {
 
       const notificationRequest = await Notification.findOne({ _id: id });
       if (!notificationRequest) {
-          return res.status(404).json({ message: 'Person not found' });
+          return res.status(404).json({ message: 'notification not found' });
       }
       res.json(notificationRequest);
   } catch (error) {
@@ -103,7 +97,3 @@ router.delete('/:id', async (req, res) => {
 });
 
 module.exports = router;
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
