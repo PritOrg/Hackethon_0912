@@ -9,4 +9,3 @@ const Approval = new mongoose.Schema({
     createdAt: Date,
   });
 module.exports = new mongoose.model('Approval', Approval);
-  
