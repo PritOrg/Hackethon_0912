@@ -2,14 +2,14 @@ const express = require('express');
 const router = express.Router();
 const { Types } = require('mongoose');
 const { ObjectId } = Types;
-const Employee = require('../schemas/employee');
+const Holiday = require('../schemas/holiday');
 
-// getAll for Employee Object
+// getAll for holiday Object
 router.get('/', async (req, res) => {
   try {
-    const employee = await Employee.find();
-    res.json(employee);
-    console.log(employee);
+    const holiday = await Holiday.find();
+    res.json(holiday);
+    console.log(holiday);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -25,32 +25,32 @@ app.get('/:id', async (req, res) => {
           return res.status(400).json({ message: 'Invalid ID format' });
       }
 
-      const employeeRequest = await Employee.findOne({ _id: id });
-      if (!employeeRequest) {
+      const holidayRequest = await Holiday.findOne({ _id: id });
+      if (!holidayRequest) {
           return res.status(404).json({ message: 'Person not found' });
       }
-      res.json(employeeRequest);
+      res.json(holidayRequest);
   } catch (error) {
       console.error('Error:', error);
       res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-// adding data of Employee object
+// adding data of Holiday object
 router.post('/', async (req, res) => {
   try {
-    const employeeData = req.body;
+    const holidayData = req.body;
   
     // Generate a new ObjectId
     const objectId = new ObjectId();
   
-    // Add the generated ObjectId to the employeeData
-    employeeData._id = objectId;
+    // Add the generated ObjectId to the holidayData
+    holidayData._id = objectId;
   
-    const newEmployee = new Employee(employeeData);
+    const newHoliday = new Holiday(holidayData);
   
-    await newEmployee.save();
-    res.status(201).json(newEmployee);
+    await newHoliday.save();
+    res.status(201).json(newHoliday);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -60,21 +60,19 @@ router.post('/', async (req, res) => {
 router.patch('/:id', async (req, res) => {
     const id = req.params.id;
     const updatedData = {
-        "userId": req.body.userId,
-        "startDate": req.body.startDate,
-        "endDate": req.body.endDate,
-        "status": req.body.status,
-        "reason": req.body.reason,
-        "createdAt": req.body.createdAt,
+    "id": String,
+    "name": String,
+    "date": Date,
+    "createdAt": Date,
     };
     try {
-        const updatedEmployee = await Employee.findOneAndUpdate({ _id: id }, updatedData, {
+        const updatedHoliday = await Holiday.findOneAndUpdate({ _id: id }, updatedData, {
             new: false,
         });
-        if (!updatedEmployee) {
-            return res.status(404).json({ message: 'Employee not found' });
+        if (!updatedHoliday) {
+            return res.status(404).json({ message: 'Holiday not found' });
         }
-        res.json(updatedEmployee);
+        res.json(updatedHoliday);
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -85,15 +83,19 @@ router.patch('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const id = req.params.id;
     try {
-        const deletedEmployee = await Employee.findOneAndDelete({ _id: id });
-        if (!deletedEmployee) {
-            return res.status(404).json({ message: 'Employee not found' });
+        const deletedHoliday = await Holiday.findOneAndDelete({ _id: id });
+        if (!deletedHoliday) {
+            return res.status(404).json({ message: 'Holiday not found' });
         }
-        res.json({ message: 'Employee deleted successfully' });
+        res.json({ message: 'Holiday deleted successfully' });
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
+<<<<<<< Updated upstream
 module.exports = router;
+=======
+module.exports = router;
+>>>>>>> Stashed changes
