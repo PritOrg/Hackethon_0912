@@ -8,9 +8,9 @@ import { ApiEmployeeService } from '../api-employee.service';
 })
 export class ProfileComponent {
   constructor(private _api: ApiEmployeeService) { }
+  new:Employee = new Employee()
+  employee: Employee[] = [this.new]
 
-  employee: Employee[] = []
-  
 }
 
 class Employee{
