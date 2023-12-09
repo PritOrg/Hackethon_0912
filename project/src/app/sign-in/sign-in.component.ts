@@ -20,7 +20,7 @@ export class SignInComponent {
   login(){
     if (this.loginForm.value.email == "bhargav" && this.loginForm.value.password=="bhagiya"){
       localStorage.setItem('user' , JSON.stringify(this.loginForm.value))
-      this._router.navigate(['/']);
+      this._router.navigate(['/profile']);
     }
     else{
       this.errmsg= "info is wrong ...."
