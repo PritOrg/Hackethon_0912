@@ -11,7 +11,7 @@ mongoose.connect(conStr).then(() => {
   app.use(bodyParser.urlencoded({ extended: false }));
 
   const employeeRoutes = require('./routes/employeeRoutes');
-  const leaveRequestRoutes = require('./routes/leaveRequestRoutes');
+  const leaveRequestRoutes = require('./routes/leaveRequestsRoutes');
 
   app.use('/employee', employeeRoutes);
   app.use('/leave-requests', leaveRequestRoutes);

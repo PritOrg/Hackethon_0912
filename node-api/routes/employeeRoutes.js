@@ -37,7 +37,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-app.patch('/:id', async (req, res) => {
+router.patch('/:id', async (req, res) => {
     const id = req.params.id;
     const updatedData = {
         "userId": req.body.userId,
@@ -62,7 +62,7 @@ app.patch('/:id', async (req, res) => {
 });
 
 //Delete 
-app.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     const id = req.params.id;
     try {
         const deletedEmployee = await Employee.findOneAndDelete({ _id: id });
