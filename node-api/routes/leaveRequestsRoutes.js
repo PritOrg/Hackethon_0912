@@ -3,7 +3,7 @@ const router = express.Router();
 const { Types } = require('mongoose');
 const { ObjectId } = Types;
 const LeaveRequest = require('../schemas/leave-request');
-
+const { route } = require('./employeeRoutes');
 // getAll for LeaveRequest Object
 router.get('/', async (req, res) => {
   try {
@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 });
 
 //get By id
-app.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
         const id = req.params.id;
 
@@ -57,7 +57,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-app.patch('/:id', async (req, res) => {
+router.patch('/:id', async (req, res) => {
     const id = req.params.id;
     const updatedData = {
         "userId": req.body.userId,
@@ -82,7 +82,7 @@ app.patch('/:id', async (req, res) => {
 });
 
 //Delete 
-app.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     const id = req.params.id;
     try {
         const deletedLeaveRequest = await LeaveRequest.findOneAndDelete({ _id: id });

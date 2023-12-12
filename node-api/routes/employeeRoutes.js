@@ -3,6 +3,33 @@ const router = express.Router();
 const { Types } = require('mongoose');
 const { ObjectId } = Types;
 const Employee = require('../schemas/employee');
+const bcrypt = require('bcrypt');
+
+router.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    // Check if the employee exists
+    const employee = await Employee.findOne({ username });
+
+    if (!employee) {
+      return res.status(401).json({ message: 'Invalid username or password' });
+    }
+
+    // Compare passwords
+    const isPasswordValid = await bcrypt.compare(password, employee.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid username or password' });
+    }
+
+    // Successful authentication
+    res.status(200).json({ message: 'Login successful', employee });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 // getAll for Employee Object
 router.get('/', async (req, res) => {
@@ -13,6 +40,26 @@ router.get('/', async (req, res) => {
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+//get By id
+router.get('/:id', async (req, res) => {
+  try {
+      const id = req.params.id;
+
+      if (!ObjectId.isValid(id)) {
+          return res.status(400).json({ message: 'Invalid ID format' });
+      }
+
+      const employeeRequest = await Employee.findOne({ _id: id });
+      if (!employeeRequest) {
+          return res.status(404).json({ message: 'Person not found' });
+      }
+      res.json(employeeRequest);
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
@@ -37,7 +84,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-app.patch('/:id', async (req, res) => {
+router.patch('/:id', async (req, res) => {
     const id = req.params.id;
     const updatedData = {
         "userId": req.body.userId,
@@ -62,7 +109,7 @@ app.patch('/:id', async (req, res) => {
 });
 
 //Delete 
-app.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     const id = req.params.id;
     try {
         const deletedEmployee = await Employee.findOneAndDelete({ _id: id });
