@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Route, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ApiEmployeeService } from '../api-employee.service';
 
 @Component({
@@ -33,11 +33,16 @@ export class SignInComponent {
     if (this.loginForm.valid) {
       // If the form is valid, call the authentication service
       const { email, password } = this.loginForm.value;
+      console.log(email,password);
       this._api.login(email, password).subscribe(
-        (response:any) => {
-          console.log(response);
+        (response: any) => {
+          localStorage.setItem('email', response);
           this._router.navigate(['/'])
           // Handle successful login
+        },
+        (error) => {
+          console.error('Login failed', error);
+          // Handle failed login (show error message, etc.)
         }
       );
     }

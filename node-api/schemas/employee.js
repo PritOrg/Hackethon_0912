@@ -1,11 +1,13 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const Employee = new mongoose.Schema({
-    "username": String,
-    "email": String,
-    "password": String, // Hashed password
-    "role" : String, // Role (e.g., employee, manager, admin)
-    "createdAt": Date,
-})
+const employeeSchema = new mongoose.Schema({
+    username: String,
+    email: String,
+    password: String,
+    role: String,
+    createdAt: Date,
+});
 
-module.exports = new mongoose.model('Employee', Employee);
+const Employee = mongoose.model('Employee', employeeSchema);
+
+module.exports = Employee;
