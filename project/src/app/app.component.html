@@ -1,1 +1,94 @@
-<router-outlet></router-outlet>
+<!-- Main Container -->
+<div class="container-fluid">
+
+  <!-- Main Row -->
+  <div class="row bg-dark text-light">
+
+    <!-- Sidebar -->
+    <div class="col-12 col-md-2 sidebar rounded shadow-lg mb-3 mb-md-0" *ngIf="showSidebarAndNavbar">
+      <!-- Sidebar Content -->
+      <ul class="h4 list p-0 rounded">
+        <!-- Logo -->
+        <li class="list-group-item bg-dark text-light py-3 ">
+          <a class="navbar-brand p-2 list-group-link" routerLink="/">
+            <img src="../favicon.ico" alt="Profile" width="30" height="24" class="d-inline-block align-text-top">
+          </a>
+        </li>
+        <!-- Navigation Items -->
+        <li *ngFor="let t of navItems" class="list-group-item bg-dark text-light py-3">
+          <a class="rounded list-group-link nav-link p-2" [routerLink]="t.link">
+            <!-- Font Awesome Icon -->
+            <fa-icon class="px-2" [icon]="t.icon"></fa-icon>
+            {{ t.name }}
+          </a>
+        </li>
+       </ul> 
+    </div>
+
+    <!-- Outlet -->
+    <div class="col px-4 py-4">
+
+      <!-- Navbar -->
+      <nav class="navbar rounded navbar-expand-lg navbar-dark bg-dark" *ngIf="showSidebarAndNavbar">
+        <!-- Container for Navbar Content -->
+        <div class="container-fluid">
+          <!-- Navbar Toggler Button -->
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <!-- Search Form -->
+          <form class="d-flex">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+          </form>
+          <!-- Navbar Links -->
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <!-- Existing Navbar Links -->
+              <!-- ... -->
+              <li class="nav-item">
+                <a class="btn btn-outline-primary" href="#">Logout</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Content Area -->
+      <!-- app.component.html -->
+      <div [@fadeInOut]="prepareRoute(outlet)">
+        <router-outlet #outlet="outlet"></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="vh-100 text-center bg-dark text-light" *ngIf="showSidebarAndNavbar">
+  <div class="container">
+    <div class="row align-items-center justify-content-between">
+      <div class="col-12 col-md-6">
+        <div class="text-center text-lg-start">
+          <p class="mb-0">
+            ©
+            <script>document.write(new Date().getFullYear())</script> Penta Hacktivists.
+            Created with
+            <i class="fa fa-heart text-danger" aria-hidden="true"></i> by Prit, Rajvi, Urvashi, Meet, and Bhargav.
+          </p>
+          <p class="mb-0">
+            Darshan University, December 23 Workshop. Angular SPA for Leave Management System.
+          </p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <ul class="nav nav-footer justify-content-center justify-content-lg-end">
+          <li class="nav-item">
+            <a href="https://www.creative-tim.com" class="nav-link text-white" target="_blank">Visit our website</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

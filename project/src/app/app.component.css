@@ -1,0 +1,98 @@
+/* Sidebar Styling */
+.sidebar {
+  background-image: linear-gradient(to right, #6A5ACD, #483D8B);
+  min-height: 100vh;
+  /* Use min-height to ensure it takes at least the full viewport height */
+  padding: 25px !important;
+}
+
+.list {
+  min-height: 100vh;
+}
+
+.list-group-item {
+  line-height: 50px !important;
+  background-image: linear-gradient(to right, #5F9EA0, #6A5ACD) !important;
+  transition: background-color 0.3s ease-in-out;
+  /* Add smooth transition effect */
+}
+
+.list-group-link {
+  line-height: 100%;
+}
+
+.list-group-link:hover {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  background-image: linear-gradient(to right, #00FFFF, #5F9EA0, #6A5ACD) !important;
+  border-radius: 10px !important;
+}
+
+/* Navbar Styling */
+.navbar {
+  background-image: linear-gradient(to right, #5F9EA0, #6A5ACD) !important;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.fade-in-out {
+  transition: opacity 0.5s;
+}
+
+.fade-in-out.ng-enter,
+.fade-in-out.ng-leave-to {
+  opacity: 0;
+}
+
+.fade-in-out.ng-enter-to,
+.fade-in-out.ng-leave {
+  opacity: 1;
+}
+
+/* Content Styling */
+.content {
+  padding: 15px;
+  /* Adjust padding as needed */
+}
+
+/* Footer Styling */
+.vh-100 {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.text-center {
+  margin-top: auto;
+}
+
+/* Adjustments for better responsiveness */
+@media (max-width: 767px) {
+  .sidebar {
+    position: fixed;
+    /* Keep sidebar fixed on smaller devices */
+    width: 100%;
+    /* Full width for small devices */
+  }
+
+  .navbar {
+    position: fixed;
+    /* Keep navbar fixed at the top */
+    width: 100%;
+    /* Full width for small devices */
+  }
+
+  .content {
+    margin-left: 0;
+    /* Ensure content doesn't overlap with the fixed sidebar */
+  }
+
+  .mb-md-0 {
+    margin-bottom: 0 !important;
+  }
+
+  .py-md-4 {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+}

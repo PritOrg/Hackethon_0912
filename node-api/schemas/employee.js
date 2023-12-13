@@ -1,12 +1,18 @@
 const mongoose = require('mongoose');
 
-const employeeSchema = new mongoose.Schema({
+const employeeSchema = new mongoose.Schema( {
     username: String,
     email: String,
     password: String,
     role: String,
-    createdAt: Date,
-});
+    leaveRequests: [
+      {
+        startDate: String,
+        endDate: String,
+        status: String
+      }
+    ]
+  });
 
 const Employee = mongoose.model('Employee', employeeSchema);
 

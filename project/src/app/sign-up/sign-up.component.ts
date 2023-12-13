@@ -6,11 +6,16 @@ import { ApiEmployeeService } from '../api-employee.service';
 @Component({
   selector: 'app-sign-up',
   templateUrl: './sign-up.component.html',
-  styleUrl: './sign-up.component.css'
+  styleUrl: '../app.component.css'
 })
 export class SignUpComponent {
   signupForm: FormGroup;
+  
+  showPassword = false;
 
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
   constructor(private router: Router, private fb: FormBuilder, private _api: ApiEmployeeService) {
     this.signupForm = this.fb.group({
       username: ['', Validators.required],

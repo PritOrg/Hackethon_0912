@@ -1,3 +1,81 @@
+Before Login (Public/Home Page):
+
+Introduction to the Leave Management System:
+
+Brief description of the system and its purpose.
+Key features and benefits.
+User Authentication:
+
+Option to log in or sign up for users.
+Any announcements or news related to the system.
+After Login (User Dashboard):
+
+Personalized Dashboard:
+
+Overview of pending leaves, upcoming holidays, or important notices.
+Quick links to frequently used features.
+Apply for Leave:
+
+A form to submit leave requests, specifying details like start/end date, reason, etc.
+Leave History:
+
+View a history of past leave requests with their status (approved, pending, rejected).
+Profile Management:
+
+Update personal information, password, and contact details.
+Notification Center:
+
+Receive alerts for leave approvals, rejections, or other important system notifications.
+For Admin:
+
+Admin Dashboard:
+
+Overview of leave requests, recent activities, and system statistics.
+Manage Leave Requests:
+
+View, approve, or reject leave requests submitted by users.
+User Management:
+
+View and manage user profiles.
+Grant or revoke user roles.
+System Configuration:
+
+Configure leave types, holiday calendars, and other system settings.
+Reports and Analytics:
+
+Generate reports on leave trends, user activities, etc.
+To check if an admin is logged in:
+
+User Roles:
+
+Assign roles to users during the signup process.
+Have a role attribute in the user profile (e.g., "user" and "admin").
+Authentication Middleware:
+
+Use middleware to check the user's role during authentication.
+Redirect users to different dashboards based on their roles.
+Route Guards:
+
+Implement route guards in Angular to protect admin routes from unauthorized access.
+Admin Home Page:
+
+Admin Dashboard:
+
+Display an overview of pending leave requests, recent activities, and system statistics.
+Quick links to key admin functionalities.
+Leave Management:
+
+Dedicated sections to manage leave requests, view leave history, and handle user profiles.
+System Configuration:
+
+Access to settings for configuring leave types, holiday calendars, and other system parameters.
+Reports and Analytics:
+
+Tools to generate and analyze reports on leave trends, user activities, etc.
+
+
+
+
 User
 const User = {
   id: String,

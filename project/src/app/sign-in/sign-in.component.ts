@@ -6,19 +6,21 @@ import { ApiEmployeeService } from '../api-employee.service';
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
-  styleUrl: './sign-in.component.css'
+  styleUrl: '../app.component.css'
 })
 export class SignInComponent {
-  constructor(private _router:Router,private fb:FormBuilder, private _api:ApiEmployeeService){
+  constructor(private _router: Router, private fb: FormBuilder, private _api: ApiEmployeeService) {
 
   }
+  showPassword = false;
 
-  new:Employee = new Employee()
-  employee: Employee[] = [this.new]
-  
-  loginForm : FormGroup = new FormGroup({
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
+  loginForm: FormGroup = new FormGroup({
     email: new FormControl(''),
-    password : new FormControl('')
+    password: new FormControl('')
   });
 
   ngOnInit() {
@@ -33,7 +35,7 @@ export class SignInComponent {
     if (this.loginForm.valid) {
       // If the form is valid, call the authentication service
       const { email, password } = this.loginForm.value;
-      console.log(email,password);
+      console.log(email, password);
       this._api.login(email, password).subscribe(
         (response: any) => {
           localStorage.setItem('email', response);
@@ -48,15 +50,15 @@ export class SignInComponent {
     }
   }
 }
-class Employee{
+class Employee {
   _id: String;
   userId: String;
   message: String;
   isRead: Boolean;
-  constructor(){
-    this._id= '0';
-    this.userId= '';
-    this.message= '';
-    this.isRead= true;
+  constructor() {
+    this._id = '0';
+    this.userId = '';
+    this.message = '';
+    this.isRead = true;
   }
 }
