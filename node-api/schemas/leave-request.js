@@ -7,6 +7,7 @@ const LeaveRequest = new mongoose.Schema({
     "status": String, // Pending, Approved, Rejected, etc.
     "reason": String,
     "createdAt": Date,
+    "leaveType": String,
   });
 module.exports = new mongoose.model('LeaveRequest', LeaveRequest);
   

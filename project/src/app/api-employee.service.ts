@@ -8,10 +8,22 @@ import { AuthService } from './auth.service';
 export class ApiEmployeeService {
   apiUrl = 'http://localhost:1969'
 
-  constructor(private _http: HttpClient, private _auth:AuthService ) { }
+  constructor(private _http: HttpClient, private _auth: AuthService) { }
   getAllEmp() {
     const headers = this.getHeaders();
     return this._http.get(this.apiUrl, { headers });
+  }
+
+  makeRequest(startDate: number, endDate: number, id: string, reason: string, leaveType: string) {
+    const createdAt = new Date().toUTCString();
+    const body = { startDate, endDate, createdAt, reason, leaveType };
+
+    return this._http.post("${this.apiUrl}+/leave-requests/${id}/apply-leave"
+      , body, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    });
   }
 
   login(email: string, password: string) {
@@ -40,7 +52,7 @@ export class ApiEmployeeService {
   logout() {
     this._auth.logout();
   }
-  
+
   private getHeaders() {
     const token = sessionStorage.getItem('token');
     return new HttpHeaders({
