@@ -7,9 +7,12 @@ const employeeSchema = new mongoose.Schema( {
     role: String,
     leaveRequests: [
       {
+        _id: String,
         startDate: String,
         endDate: String,
-        status: String
+        status: String,
+        reason: String,
+        createdAt: Date,
       }
     ]
   });

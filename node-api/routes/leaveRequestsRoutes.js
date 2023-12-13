@@ -4,6 +4,7 @@ const { Types } = require('mongoose');
 const { ObjectId } = Types;
 const LeaveRequest = require('../schemas/leave-request');
 const { route } = require('./employeeRoutes');
+const Employee = require('../schemas/employee');
 // getAll for LeaveRequest Object
 router.get('/', async (req, res) => {
   try {
@@ -37,25 +38,29 @@ router.get('/:id', async (req, res) => {
 });
 
 // adding data of LeaveRequest object
-router.post('/', async (req, res) => {
-  try {
-    const leaveRequest = req.body;
+router.post('/:id/apply-leave', async (req, res) => {
+    try {
+      const leaveRequest = req.body;
   
-    // Generate a new ObjectId
-    const objectId = new ObjectId();
+      // Generate a new ObjectId
+      const objectId = new ObjectId();
   
-    // Add the generated ObjectId to the employeeData
-    leaveRequest._id = objectId;
+      // Add the generated ObjectId to the employeeData
+      leaveRequest._id = objectId;
   
-    const newLeaveRequest = new LeaveRequest(leaveRequest);
+      // Use findByIdAndUpdate to update the leaveRequests array
+      const updatedEmployee = await Employee.findByIdAndUpdate(
+        req.params.id,
+        { $push: { leaveRequests: leaveRequest } },
+        { new: true }
+      );
   
-    await newLeaveRequest.save();
-    res.status(201).json(newLeaveRequest);
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+      res.status(201).json(updatedEmployee);
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
 
 router.patch('/:id', async (req, res) => {
     const id = req.params.id;

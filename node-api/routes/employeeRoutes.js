@@ -4,12 +4,16 @@ const { Types } = require('mongoose');
 const { ObjectId } = Types;
 const Employee = require('../schemas/employee');
 const bcrypt = require('bcrypt');
+const authMiddleware = require('./auth.middleware');
+
+
+// router.use('/:id', authMiddleware);
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
     // Check if the employee exists
-    const employee = await Employee.findOne({ email:email });
+    const employee = await Employee.findOne({ email: email });
     console.log(employee);
     if (!employee) {
       return res.status(401).json({ message: 'Invalid email or password' });
@@ -23,7 +27,8 @@ router.post('/login', async (req, res) => {
     }
 
     // Successful authentication
-    res.status(200).json({ message: 'Login successful', employee });
+    res.status(200).json({ message: 'Login successful', employeeId: employee._id });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
