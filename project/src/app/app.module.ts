@@ -8,6 +8,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { ApplyLeaveComponent } from './apply-leave/apply-leave.component';
+import { LeaveHistoryComponent } from './leave-history/leave-history.component';
+import { ProfileComponent } from './profile/profile.component';
+import { NotificationComponent } from './notification/notification.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +20,11 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     SignInComponent,
     HomeComponent,
     SignUpComponent,
+    DashboardComponent,
+    ApplyLeaveComponent,
+    LeaveHistoryComponent,
+    ProfileComponent,
+    NotificationComponent,
   ],
   imports: [
     HttpClientModule,

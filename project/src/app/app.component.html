@@ -22,6 +22,20 @@
             {{ t.name }}
           </a>
         </li>
+        <li *ngIf="isSignedIn" class="list-group-item bg-dark text-light py-3">
+          <a class="rounded list-group-link nav-link p-2" [routerLink]="getLogout().link" (click)="logout()">
+            <!-- Font Awesome Icon -->
+            <fa-icon class="px-2" [icon]="getLogout().icon"></fa-icon>
+            {{ getLogout().name }}
+          </a>
+        </li>
+        <li *ngIf="!isSignedIn" class="list-group-item bg-dark text-light py-3">
+          <a class="rounded list-group-link nav-link p-2" [routerLink]="getLogout().link">
+            <!-- Font Awesome Icon -->
+            <fa-icon class="px-2" [icon]="getLogout().icon"></fa-icon>
+            {{ getLogout().name }}
+          </a>
+        </li>
        </ul> 
     </div>
 

@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { faHome, faInfo, faEnvelope, faSignInAlt, faUserGraduate, faUserTie, faLaptop, faTachometerAlt, faCalendarPlus, faHistory, faUser, faBell } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faInfo, faEnvelope, faSignInAlt, faUserGraduate, faUserTie, faLaptop, faTachometerAlt, faCalendarPlus, faHistory, faUser, faBell, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { fadeInOutAnimation } from '../assets/animation';
+import { ApiEmployeeService } from './api-employee.service';
+import { AuthService } from './auth.service';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +20,7 @@ export class AppComponent {
     return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
   }
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private _api: ApiEmployeeService, private _auth: AuthService) {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         // Check the current route and decide whether to show/hide sidebar and navbar
@@ -27,6 +29,22 @@ export class AppComponent {
     })
   };
 
+  isSignedIn = this._auth.isLoggedIn();
+
+  logout() {
+    this._api.logout();
+  }
+  getLogout() {
+    return this._auth.isLoggedIn() ? {
+      name: 'Sign Out',
+      link: '/',
+      icon: faSignOutAlt,
+    } : {
+      name: 'Sign In',
+      link: '/sign-in',
+      icon: faSignInAlt,
+    }
+  }
   navItems = [
     {
       name: 'Home',
@@ -56,7 +74,7 @@ export class AppComponent {
     },
     {
       name: 'Notifications',
-      link: '/notifications',
+      link: '/notification',
       icon: faBell
     },
     {
@@ -69,10 +87,7 @@ export class AppComponent {
       link: '/contact',
       icon: faEnvelope
     },
-    {
-      name: 'Sign In',
-      link: '/sign-in',
-      icon: faSignInAlt
-    },
-  ];
+  ]
+
 }
+
