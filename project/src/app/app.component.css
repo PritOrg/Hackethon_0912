@@ -1,6 +1,5 @@
 /* Sidebar Styling */
 .sidebar {
-  background-image: linear-gradient(to right, #6A5ACD, #483D8B);
   min-height: 100vh;
   /* Use min-height to ensure it takes at least the full viewport height */
   padding: 25px !important;
@@ -12,7 +11,8 @@
 
 .list-group-item {
   line-height: 50px !important;
-  background-image: linear-gradient(to right, #5F9EA0, #6A5ACD) !important;
+  background: linear-gradient(to right, #FFDAB9, #FFA07A) !important; /* Peach Gradient */
+  color: #333 !important; /* Dark Text Color */
   transition: background-color 0.3s ease-in-out;
   /* Add smooth transition effect */
 }
@@ -23,13 +23,14 @@
 
 .list-group-link:hover {
   background-color: rgba(255, 255, 255, 0.3) !important;
-  background-image: linear-gradient(to right, #00FFFF, #5F9EA0, #6A5ACD) !important;
+  background-image: linear-gradient(to right, #7FFFD4, #66CDAA) !important; /* Aquamarine Gradient */
   border-radius: 10px !important;
 }
 
 /* Navbar Styling */
 .navbar {
-  background-image: linear-gradient(to right, #5F9EA0, #6A5ACD) !important;
+  background: linear-gradient(to right, #FFDAB9, #FFA07A) !important; /* Peach Gradient */
+  color: #333 !important; /* Dark Text Color */
   position: sticky;
   top: 0;
   z-index: 1000;
