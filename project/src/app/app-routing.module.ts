@@ -8,9 +8,11 @@ import { ApplyLeaveComponent } from './apply-leave/apply-leave.component';
 import { LeaveHistoryComponent } from './leave-history/leave-history.component';
 import { ProfileComponent } from './profile/profile.component';
 import { NotificationComponent } from './notification/notification.component';
+import { SignUpComponent } from './sign-up/sign-up.component';
 
 const routes: Routes = [
-  {path:'sign-in',component:SignInComponent},
+  { path: 'sign-in', component: SignInComponent },
+  { path: 'sign-up', component: SignUpComponent },
   { path: '', component: HomeComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'apply-leave', component: ApplyLeaveComponent, canActivate: [AuthGuard] },

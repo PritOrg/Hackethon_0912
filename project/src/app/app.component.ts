@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { faHome, faInfo, faEnvelope, faSignInAlt, faUserGraduate, faUserTie, faLaptop, faTachometerAlt, faCalendarPlus, faHistory, faUser, faBell, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faInfo, faEnvelope, faSignInAlt, faTachometerAlt, faCalendarPlus, faHistory, faUser, faBell, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { fadeInOutAnimation } from '../assets/animation';
 import { ApiEmployeeService } from './api-employee.service';
 import { AuthService } from './auth.service';
