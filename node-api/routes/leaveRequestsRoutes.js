@@ -5,16 +5,21 @@ const { ObjectId } = Types;
 const LeaveRequest = require('../schemas/leave-request');
 const { route } = require('./employeeRoutes');
 const Employee = require('../schemas/employee');
+
 // getAll for LeaveRequest Object
-router.get('/', async (req, res) => {
-  try {
-    const leaveRequest = await LeaveRequest.find();
-    res.json(leaveRequest);
-    console.log(leaveRequest);
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+router.get('/all-leave-requests', async (req, res) => {
+    try {
+        // Retrieve all leave requests from all employees
+        const allLeaveRequests = await Employee.find({}, 'leaveRequests');
+
+        // Flatten the array of leave requests from multiple employees
+        const flattenedLeaveRequests = allLeaveRequests.flatMap(employee => employee.leaveRequests);
+
+        res.json(flattenedLeaveRequests);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 //get By id
@@ -40,7 +45,8 @@ router.get('/:id', async (req, res) => {
 // adding data of LeaveRequest object
 router.post('/:id/apply-leave', async (req, res) => {
     try {
-      const leaveRequest = req.body;
+        const employeeId = req.params.id;
+        const leaveRequest = { ...req.body, employeeId };
   
       // Generate a new ObjectId
       const objectId = new ObjectId();

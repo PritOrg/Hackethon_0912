@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
-const LeaveRequest = new mongoose.Schema({
-    "userId": String, // User making the request
+const leaveRequest = new mongoose.Schema({
+  "employeeId": String, // Employee making the request
     "startDate": Date,
     "endDate": Date,
     "status": String, // Pending, Approved, Rejected, etc.
@@ -9,5 +9,4 @@ const LeaveRequest = new mongoose.Schema({
     "createdAt": Date,
     "leaveType": String,
   });
-module.exports = new mongoose.model('LeaveRequest', LeaveRequest);
-  
+  module.exports = leaveRequest;

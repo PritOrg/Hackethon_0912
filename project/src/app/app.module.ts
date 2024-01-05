@@ -13,7 +13,8 @@ import { ApplyLeaveComponent } from './apply-leave/apply-leave.component';
 import { LeaveHistoryComponent } from './leave-history/leave-history.component';
 import { ProfileComponent } from './profile/profile.component';
 import { NotificationComponent } from './notification/notification.component';
-
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { CircularChartComponent } from '../componants/circular-chart/circular-chart.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -25,13 +26,15 @@ import { NotificationComponent } from './notification/notification.component';
     LeaveHistoryComponent,
     ProfileComponent,
     NotificationComponent,
+    CircularChartComponent,
   ],
   imports: [
     HttpClientModule,
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    BsDatepickerModule.forRoot(),
   ],
   providers: [],
   bootstrap: [AppComponent]

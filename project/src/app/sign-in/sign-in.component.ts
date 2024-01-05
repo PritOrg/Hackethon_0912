@@ -43,6 +43,8 @@ export class SignInComponent implements OnInit {  // Implement OnInit
             showConfirmButton: false,
             timer: 1500
           });
+          const employeeDetails = this._api.getEmployeeDetails();
+          console.log('Employee Details:', employeeDetails);
           // Handle successful login
         },
         (error) => {

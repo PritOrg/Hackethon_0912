@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const LeaveBalance = new mongoose.Schema({
+const leaveBalance = new mongoose.Schema({
     id: String,
     userId: String,
     annualLeave: Number,
@@ -8,5 +8,5 @@ const LeaveBalance = new mongoose.Schema({
     privilegeLeave : Number,
     createdAt: Date,
   });
-module.exports = new mongoose.model('LeaveBalance',LeaveBalance);
+  module.exports = leaveBalance
   

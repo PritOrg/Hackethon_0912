@@ -27,7 +27,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Successful authentication
-    res.status(200).json({ message: 'Login successful', employeeId: employee._id });
+    res.status(200).json({ message: 'Login successful', employeeId: employee._id ,employee: employee});
 
   } catch (error) {
     console.error(error);

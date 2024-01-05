@@ -1,0 +1,10 @@
+<p>circular-chart works!</p>
+<div class="card bg-dark text-light">
+    <div class="card-body">
+      <h5 class="card-title">Circular Chart</h5>
+      <div class="circular-chart" #circle>
+        <div class="circle" [style.transform]="'rotate(' + calculateRotation() + 'deg)'"></div>
+        <div class="percentage">{{ percentage }}%</div>
+      </div>
+    </div>
+  </div>

@@ -1,9 +1,41 @@
 <p>apply-leave works!</p>
-<nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
-    aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a routerLink="/" class="text-light text-decoration-none">H O M E</a></li>
-        <li class="breadcrumb-item active"><a routerLink="/apply-leave"
-                class="text-light text-decoration-none">A P P L Y &nbsp;&nbsp;L E A V E</a></li>
-    </ol>
+<nav
+  style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+  aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink="/" class="text-light text-decoration-none">H O M E</a></li>
+    <li class="breadcrumb-item active"><a routerLink="/apply-leave" class="text-light text-decoration-none">A P P L Y
+        &nbsp;&nbsp;L E A V E</a></li>
+  </ol>
 </nav>
+<div class="container">
+  <form [formGroup]="leaveRequestForm" (ngSubmit)="onSubmit()">
+
+    <div class="form-group mb-3">
+      <label for="startDate" class="form-label">Start Date:</label>
+      <input type="date" class="form-control" id="startDate" formControlName="startDate" required>
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="endDate" class="form-label">End Date:</label>
+      <input type="date" class="form-control" id="endDate" formControlName="endDate" required>
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="leaveType" class="form-label">Leave Type:</label>
+      <select id="leaveType" class="form-select" formControlName="leaveType" required>
+        <option *ngFor="let type of leaveTypes" [value]="type">{{ type }}</option>
+      </select>
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="reason" class="form-label">Reason:</label>
+      <textarea id="reason" class="form-control" formControlName="reason" placeholder="Your Reason For Leave" required></textarea>
+    </div>
+    <div class="text-center">
+      <button class="my-2 btn btn-outline-success text-center btn-lg" type="submit"
+        [disabled]="!leaveRequestForm.valid">Submit Request</button>
+    </div>
+
+  </form>
+</div>
