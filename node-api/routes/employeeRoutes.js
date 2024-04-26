@@ -4,10 +4,6 @@ const { Types } = require('mongoose');
 const { ObjectId } = Types;
 const Employee = require('../schemas/employee');
 const bcrypt = require('bcrypt');
-const authMiddleware = require('./auth.middleware');
-
-
-// router.use('/:id', authMiddleware);
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
@@ -20,14 +16,14 @@ router.post('/login', async (req, res) => {
     }
 
     // Compare passwords
-    const isPasswordValid = await bcrypt.compare(password, employee.password);
+    const isPasswordValid = bcrypt.compare(password, employee.password);
 
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     // Successful authentication
-    res.status(200).json({ message: 'Login successful', employeeId: employee._id ,employee: employee});
+    res.status(200).json({ message: 'Login successful', employeeId: employee._id, employee: employee });
 
   } catch (error) {
     console.error(error);
@@ -35,7 +31,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// getAll for Employee Object
 router.get('/', async (req, res) => {
   try {
     const employee = await Employee.find();
@@ -47,7 +42,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-//get By id
 router.get('/:id', async (req, res) => {
   try {
     const id = req.params.id;
@@ -67,26 +61,45 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// adding data of Employee object
-// Registration route
 router.post('/', async (req, res) => {
   try {
-    const { username, email, password, createdAt } = req.body;
+    const { username, email, password, firstName, middleName, lastName, birthdate, profilePic, role, joiningDate, expertise, projects, achievements, jobShift } = req.body;
 
     if (!password) {
       return res.status(400).json({ message: 'Password is required' });
     }
 
-    // Hash the password before saving it
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const newEmployee = new Employee({
+      // Personal Information
       username,
       email,
       password: hashedPassword,
-      role: 'employee',
-      createdAt,
+      firstName,
+      middleName,
+      lastName,
+      birthdate,
+      profilePic,
+      // Organizational Information
+      role,
+      joiningDate,
+      expertise,
+      projects,
+      achievements,
+      jobShift,
+      // Leave Requests and Balance
+      leaveRequests: [],
+      leaveBalance: {
+        annualLeave: 0,
+        maternityLeave: 0,
+        privilegeLeave: 0,
+        halfDayLeave: 0,
+        casualLeave: 0,
+        sickLeave: 0
+      },
+      specialRemarks: ''
     });
 
     await newEmployee.save();
@@ -97,20 +110,18 @@ router.post('/', async (req, res) => {
   }
 });
 
-
 router.patch('/:id', async (req, res) => {
   const id = req.params.id;
   const updatedData = req.body;
   console.log('PATCH Request Body:', updatedData);
 
-  // Ensure that the ID is a valid ObjectId
   if (!ObjectId.isValid(id)) {
     return res.status(400).json({ message: 'Invalid ID format' });
   }
 
   try {
     const updatedUser = await Employee.findOneAndUpdate({ _id: id }, updatedData, {
-      new: true, // Return the updated document
+      new: true,
     });
 
     if (!updatedUser) {
@@ -124,7 +135,6 @@ router.patch('/:id', async (req, res) => {
   }
 });
 
-// Delete
 router.delete('/:id', async (req, res) => {
   const id = req.params.id;
   try {

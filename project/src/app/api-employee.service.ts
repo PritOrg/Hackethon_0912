@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { EmployeeDetails } from '../module/Employee';
-import { tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +38,6 @@ export class ApiEmployeeService {
 
   login(email: string, password: string) {
     const body = { email, password };
-    this._auth.login(body);
     const options = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -49,23 +48,29 @@ export class ApiEmployeeService {
       tap((response: any) => {
         // Assuming the response includes additional employee details
         const { employeeId, employee} = response;
-
+        this._auth.login({...body,role:employee.role});
         // Store the token and additional employee details
         this.token = {...employee, employeeId};
         console.log(this.token);
-        this.employeeDetails = new EmployeeDetails(employee);
+        this.employeeDetails = employee;
       })
     );
   }
 
-  signup(username: string, email: string, password: string,) {
+  signup(
+    userObj:any
+  ): Observable<any> {
     const createdAt = new Date().toISOString();
-    const body = { username, email, password, createdAt };
+    const body = {
+      ...userObj,
+      projects:[],
+      createdAt:createdAt
+    };
     const options = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
       })
-    }
+    };
     return this._http.post(`${this.apiUrl}`, body, options);
   }
 

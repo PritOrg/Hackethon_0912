@@ -52,19 +52,35 @@
                 <div class="card-body m-5">
                   <form role="form" [formGroup]="signupForm" (ngSubmit)="onSubmit()">
                     <div class="input-group input-group-outline my-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                      </div>
                       <input type="text" placeholder="Username" class="form-control" formControlName="username">
                     </div>
                     <div class="input-group input-group-outline my-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                      </div>
                       <input type="email" placeholder="Email" class="form-control" formControlName="email">
                     </div>
-                    <div class="input-group input-group-outline my-3">
+                    <div class="input-group input-group-outline mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                      </div>
                       <input type="{{ showPassword ? 'text' : 'password' }}" placeholder="Password" class="form-control"
                         formControlName="password">
                       <button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()">
-                        <fa-icon [icon]="showPassword ? 'eye' : 'eye-slash'"></fa-icon>
+                        <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
                       </button>
                     </div>
-                    <!-- Add other fields as needed based on the Node.js employee schema -->
+                    <div class="input-group input-group-outline mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                      </div>
+                      <input type="{{ showPassword ? 'text' : 'password' }}" placeholder="Confirm Password" class="form-control"
+                        formControlName="confirmPassword">
+                    </div>
+                  
                     <div class="text-center">
                       <button type="submit" style="background: linear-gradient(120deg, #3498db 0%, #8e44ad 100%);"
                         class="button text-light nav-item btn btn-outline-primary w-100 my-4 mb-2">Sign

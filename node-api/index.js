@@ -21,16 +21,12 @@ mongoose.connect(conStr).then(() => {
 
   const employeeRoutes = require('./routes/employeeRoutes');
   const leaveRequestRoutes = require('./routes/leaveRequestsRoutes');
-  const leaveBalanceRoutes = require('./routes/leaveBalanceRoute');
-  const approvalRoutes = require('./routes/approvalRoutes');
-  const holidayRoutes  = require('./routes/holidayRoutes');
+  const holidayRoutes = require('./routes/holidayRoutes');
   const notificationRoutes = require('./routes/notificationRoutes');
 
   app.use('/leave-requests', leaveRequestRoutes);
-  app.use('/leave-balance' , leaveBalanceRoutes);
-  app.use('/approval' , approvalRoutes);
-  app.use('/holiday' , holidayRoutes);
-  app.use('/notification' , notificationRoutes);
+  app.use('/holiday', holidayRoutes);
+  app.use('/notification', notificationRoutes);
   app.use('/', employeeRoutes);
 
   app.listen(1969, () => {

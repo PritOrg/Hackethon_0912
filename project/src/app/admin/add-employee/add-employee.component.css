@@ -1,0 +1,38 @@
+.step-container {
+    position: relative;
+    text-align: center;
+    transform: translateY(-43%);
+}
+
+.step-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #002145;
+    border: 2px solid #024c9b;
+    line-height: 30px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.step-1,
+.step-2,
+.step-3 {
+    cursor: pointer;
+}
+
+
+.step-line {
+    position: absolute;
+    top: 16px;
+    left: 50px;
+    width: calc(100% - 100px);
+    height: 2px;
+    background-color: #007bffc2;
+    z-index: -1;
+}
+

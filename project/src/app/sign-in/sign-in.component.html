@@ -53,14 +53,13 @@
                                                 formControlName="email">
                                         </div>
                                         <div class="input-group input-group-outline mb-3">
-                                            <input type="{{ showPassword ? 'text' : 'password' }}"
-                                                placeholder="Password" class="form-control" formControlName="password">
-                                            <button type="button" class="btn btn-outline-secondary"
-                                                (click)="togglePasswordVisibility()">
-                                                <fa-icon [icon]="showPassword ? 'eye' : 'eye-slash'"
-                                                    class="text-dark"></fa-icon>
+                                            <input type="{{ showPassword ? 'text' : 'password' }}" placeholder="Password" class="form-control"
+                                                formControlName="password">
+                                            <button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()">
+                                                <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
                                             </button>
                                         </div>
+
                                         <div class="form-check form-switch d-flex align-items-center mb-3">
                                             <input class="form-check-input" type="checkbox" id="rememberMe" checked
                                                 formControlName="rememberMe">

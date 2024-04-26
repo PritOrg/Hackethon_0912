@@ -35,7 +35,6 @@ export class SignInComponent implements OnInit {  // Implement OnInit
 
       this._api.login(email, password).subscribe(
         (response: any) => {
-          this._router.navigate(['/']);
           Swal.fire({
             position: "top-end",
             icon: "success",

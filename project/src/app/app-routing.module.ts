@@ -9,11 +9,14 @@ import { LeaveHistoryComponent } from './leave-history/leave-history.component';
 import { ProfileComponent } from './profile/profile.component';
 import { NotificationComponent } from './notification/notification.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
+import { AddEmployeeComponent } from './admin/add-employee/add-employee.component';
+import { AdminGuard } from './admin/admin.guard';
 
 const routes: Routes = [
   { path: 'sign-in', component: SignInComponent },
   { path: 'sign-up', component: SignUpComponent },
   { path: '', component: HomeComponent },
+  { path: 'admin', component: AddEmployeeComponent, canActivate: [AdminGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'apply-leave', component: ApplyLeaveComponent, canActivate: [AuthGuard] },
   { path: 'leave-history', component: LeaveHistoryComponent, canActivate: [AuthGuard] },

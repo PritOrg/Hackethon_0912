@@ -15,6 +15,8 @@ import { ProfileComponent } from './profile/profile.component';
 import { NotificationComponent } from './notification/notification.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { CircularChartComponent } from '../componants/circular-chart/circular-chart.component';
+import { AddEmployeeComponent } from './admin/add-employee/add-employee.component';
+import { EmployeeComponent } from './admin/employee/employee.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -27,6 +29,8 @@ import { CircularChartComponent } from '../componants/circular-chart/circular-ch
     ProfileComponent,
     NotificationComponent,
     CircularChartComponent,
+    AddEmployeeComponent,
+    EmployeeComponent,
   ],
   imports: [
     HttpClientModule,
