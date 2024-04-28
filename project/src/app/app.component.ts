@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { faHome, faInfo, faEnvelope, faSignInAlt, faTachometerAlt, faCalendarPlus, faHistory, faUser, faBell, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faInfo, faEnvelope, faSignInAlt, faTachometerAlt, faCalendarPlus, faHistory, faUser, faBell, faSignOutAlt, faPerson } from '@fortawesome/free-solid-svg-icons';
 import { fadeInOutAnimation } from '../assets/animation';
 import { ApiEmployeeService } from './api-employee.service';
 import { AuthService } from './auth.service';
@@ -13,12 +13,10 @@ import { AuthService } from './auth.service';
 })
 export class AppComponent {
   title = 'project';
+  storedUserRole = sessionStorage.getItem('userRole');
+  isAdmin = this.storedUserRole && this.storedUserRole.includes('admin');
 
   showSidebarAndNavbar = true;
-
-  prepareRoute(outlet: RouterOutlet) {
-    return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
-  }
 
   constructor(private router: Router, private _api: ApiEmployeeService, private _auth: AuthService) {
     this.router.events.subscribe((event) => {
@@ -45,13 +43,45 @@ export class AppComponent {
       icon: faSignInAlt,
     }
   }
+  navItemsAdmin = [
+    {
+      name: 'Home',
+      link: '/',
+      icon: faHome
+    },
+    {
+      name:'Employees',
+      link:'admin/employees',
+      icon: faPerson
+    },
+    {
+      name: 'ADD Employees',
+      link: 'admin/add-employee',
+      icon: faPerson
+    },
+    {
+      name: 'Notifications',
+      link: '/notification',
+      icon: faBell
+    },
+    {
+      name: 'About',
+      link: '/about',
+      icon: faInfo
+    },
+    {
+      name: 'Contact',
+      link: '/contact',
+      icon: faEnvelope
+    },
+  ]
   navItems = [
     {
       name: 'Home',
       link: '/',
       icon: faHome
     },
-    // Additional Features for Logged-In User
+
     {
       name: 'Dashboard',
       link: '/dashboard',

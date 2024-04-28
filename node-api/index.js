@@ -23,7 +23,6 @@ mongoose.connect(conStr).then(() => {
   const leaveRequestRoutes = require('./routes/leaveRequestsRoutes');
   const holidayRoutes = require('./routes/holidayRoutes');
   const notificationRoutes = require('./routes/notificationRoutes');
-
   app.use('/leave-requests', leaveRequestRoutes);
   app.use('/holiday', holidayRoutes);
   app.use('/notification', notificationRoutes);

@@ -27,7 +27,7 @@ export class AuthService {
     sessionStorage.setItem('user', JSON.stringify(user.email));
     sessionStorage.setItem('userRole', JSON.stringify(user.role));
       if(this.isAdmin)
-      this._router.navigate(['/admin']); 
+        this._router.navigate(['admin/employees']); 
     else
       this._router.navigate(['/']);
   }

@@ -4,6 +4,85 @@ const { Types } = require('mongoose');
 const { ObjectId } = Types;
 const Employee = require('../schemas/employee');
 const bcrypt = require('bcrypt');
+const multer = require('multer');
+const sharp = require('sharp');
+const path = require('path');
+
+const fs = require('fs');
+const { promisify } = require('util');
+const writeFileAsync = promisify(fs.writeFile);
+
+router.post('/', async (req, res) => {
+  try {
+    // // Check if a file was uploaded
+    // if (!req.files || !req.files.profilePic) {
+    //   return res.status(400).json({ message: 'No file uploaded' });
+    // }
+
+    const { username, email, password, firstName, middleName, lastName, birthdate, role, joiningDate, expertise, projects, profilePic, achievements, jobShift } = req.body;
+
+    // // Process the uploaded file
+    // const profilePic = req.files.profilePic;
+    // const fileName = Date.now() + '-' + profilePic.name;
+    // const filePath = path.join(__dirname, 'public', 'profilePics', fileName);
+
+    // Save the file
+    // await writeFileAsync(filePath, profilePic.data);
+
+    // // Resize the image using sharp
+    // const resizedImagePath = path.join(__dirname, 'public', 'profilePics', 'resized-' + fileName);
+    // await sharp(filePath)
+    //   .resize({ width: 350 })
+    //   .toFile(resizedImagePath);
+
+    // // Hash the password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // Create a new employee instance
+    const newEmployee = new Employee({
+      // Personal Information
+      username,
+      email,
+      password: hashedPassword,
+      firstName,
+      middleName,
+      lastName,
+      birthdate,
+      profilePic, // Save path to the resized image
+      // Organizational Information
+      role,
+      joiningDate,
+      expertise,
+      projects,
+      achievements,
+      jobShift,
+      // Leave Requests and Balance
+      leaveRequests: [],
+      leaveBalance: {
+        annualLeave: 0,
+        maternityLeave: 0,
+        privilegeLeave: 0,
+        halfDayLeave: 0,
+        casualLeave: 0,
+        sickLeave: 0
+      },
+      specialRemarks: ''
+    });
+
+    // Save the new employee to the database
+    await newEmployee.save();
+
+    // Return the newly created employee object
+    res.status(201).json(newEmployee);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
@@ -55,55 +134,6 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Person not found' });
     }
     res.json(employeeRequest);
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-router.post('/', async (req, res) => {
-  try {
-    const { username, email, password, firstName, middleName, lastName, birthdate, profilePic, role, joiningDate, expertise, projects, achievements, jobShift } = req.body;
-
-    if (!password) {
-      return res.status(400).json({ message: 'Password is required' });
-    }
-
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-    const newEmployee = new Employee({
-      // Personal Information
-      username,
-      email,
-      password: hashedPassword,
-      firstName,
-      middleName,
-      lastName,
-      birthdate,
-      profilePic,
-      // Organizational Information
-      role,
-      joiningDate,
-      expertise,
-      projects,
-      achievements,
-      jobShift,
-      // Leave Requests and Balance
-      leaveRequests: [],
-      leaveBalance: {
-        annualLeave: 0,
-        maternityLeave: 0,
-        privilegeLeave: 0,
-        halfDayLeave: 0,
-        casualLeave: 0,
-        sickLeave: 0
-      },
-      specialRemarks: ''
-    });
-
-    await newEmployee.save();
-    res.status(201).json(newEmployee);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });

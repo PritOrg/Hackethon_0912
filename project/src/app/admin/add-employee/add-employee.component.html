@@ -51,11 +51,10 @@
                             [value]="employeeForm.get('birthdate')?.value || ''">
                     </div>
                     <div class="mb-3">
-                        <label for="profilePic" class="form-label">Profile Picture:</label>
-                        <input type="text" class="form-control" id="profilePic" formControlName="profilePic"
-                            placeholder="Enter a URL for your profile picture"
-                            [value]="employeeForm.get('profilePic')?.value || ''">
+                        <label class="form-label fw-bold">Profile Picture:</label>
+                        <input type="text" class="form-control" formControlName="profilePic">
                     </div>
+
                 </div>
                 <div class="card-footer d-flex justify-content-end">
                     <button type="button" class="btn btn-primary next-step" (click)="nextStep()">Next</button>
@@ -173,7 +172,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label fw-bold">Profile Picture:</label>
-                                        <p>{{ employeeForm.get('profilePic')?.value }}</p>
+                                        <p>{{ employeeForm.get('profilePic')!.value }}</p>
                                     </div>
                                 </div>
                                 <div class="col-md-6">

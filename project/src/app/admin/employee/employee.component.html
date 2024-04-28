@@ -1,1 +1,25 @@
-<p>employee works!</p>
+<nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+    aria-label="breadcrumb" class="my-5">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="/" class="text-light text-decoration-none"> H O M E</a></li>
+        <li class="breadcrumb-item active"><a routerLink="/admin/employees" class="text-light text-decoration-none">A L L&nbsp;&nbsp; E M P L O Y E E S</a></li>
+    </ol>
+</nav>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 mb-4 p-3" *ngFor="let user of employees">
+            <div class="card">
+                <!-- Display profile picture if available -->
+                <img [src]="user.profilePic ? user.profilePic : 'placeholder.jpg'" class="card-img-top"
+                    alt="Profile Picture">
+                <div class="card-body">
+                    <h5 class="card-title">{{ user.firstName }} {{ user.lastName }}</h5>
+                    <p class="card-text">Username: {{ user.username }}</p>
+                    <p class="card-text">Email: {{ user.email }}</p>
+                    <p class="card-text">Role: {{ user.role }}</p>
+                    <p class="card-text">Expertise: {{ user.expertise.join(', ') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

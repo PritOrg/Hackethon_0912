@@ -14,7 +14,7 @@ export class AddEmployeeComponent implements OnInit {
   currentStep: number = 1;
   generatedPassword: string = '';
   submitEnabled = false;
-
+  selectedFileName: string = '';
   constructor(private fb: FormBuilder, private _api: ApiEmployeeService, private router: Router) { }
 
   ngOnInit(): void {
@@ -115,8 +115,44 @@ export class AddEmployeeComponent implements OnInit {
     });
     return selectedExpertise;
   }
+onProfilePicChange(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+        this.selectedFileName = file.name;
+        this.employeeForm.patchValue({
+            profilePic: file
+        });
+    }
+}
 
-  // Submit the form
+  removeProfilePic() {
+    console.log(this.employeeForm.get('profilePic'))
+    this.employeeForm.get('profilePic')!.setValue(null);
+  }
+
+  // Generate a unique 8-character password
+  generatePassword(): void {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let password = '';
+    for (let i = 0; i < 8; i++) {
+      password += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    // Show SweetAlert with the generated password
+    Swal.fire({
+      title: 'Generated Password',
+      text: `Your generated password is: ${password}`,
+      icon: 'success',
+      confirmButtonText: 'Okay'
+    }).then((result) => {
+      // Enable submit button after SweetAlert is closed
+      if (result.isConfirmed) {
+        // Enable the submit button (Assuming you have a variable like submitEnabled)
+        this.submitEnabled = true;
+        this.generatedPassword = password;
+      }
+    });
+  }
+    // Submit the form
   onSubmit() {
     if (this.employeeForm.valid) {
       const formValue = this.employeeForm.value;
@@ -170,29 +206,5 @@ export class AddEmployeeComponent implements OnInit {
         confirmButtonText: 'Okay'
       });
     }
-  }
-
-
-  // Generate a unique 8-character password
-  generatePassword(): void {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let password = '';
-    for (let i = 0; i < 8; i++) {
-      password += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    // Show SweetAlert with the generated password
-    Swal.fire({
-      title: 'Generated Password',
-      text: `Your generated password is: ${password}`,
-      icon: 'success',
-      confirmButtonText: 'Okay'
-    }).then((result) => {
-      // Enable submit button after SweetAlert is closed
-      if (result.isConfirmed) {
-        // Enable the submit button (Assuming you have a variable like submitEnabled)
-        this.submitEnabled = true;
-        this.generatedPassword = password;
-      }
-    });
   }
 }
