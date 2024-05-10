@@ -4,3 +4,18 @@
         <li class="breadcrumb-item"><a routerLink="/" class="text-light text-decoration-none">H O M E</a></li>
     </ol>
 </nav>
+
+<div class="container p-4 my-3">
+    <div class="row">
+        <div class="col-lg-8">
+            <app-calendar></app-calendar>
+        </div>
+        <div class="col-lg">
+            <app-progress-indicator [remainingLeave]="20"></app-progress-indicator>
+            <app-progress-indicator [remainingLeave]="10"></app-progress-indicator>
+            <app-progress-indicator [remainingLeave]="0"></app-progress-indicator>
+            <app-progress-indicator [remainingLeave]="30"></app-progress-indicator>
+
+        </div>
+    </div>
+</div>

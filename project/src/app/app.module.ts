@@ -17,6 +17,11 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { CircularChartComponent } from '../componants/circular-chart/circular-chart.component';
 import { AddEmployeeComponent } from './admin/add-employee/add-employee.component';
 import { EmployeeComponent } from './admin/employee/employee.component';
+import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
+import { CalendarComponent } from './calendar/calendar.component';
+import { ProgressIndicatorComponent } from './progress-indicator/progress-indicator.component';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { ProgressSpinnerMode, MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @NgModule({
   declarations: [
     AppComponent,
@@ -31,16 +36,22 @@ import { EmployeeComponent } from './admin/employee/employee.component';
     CircularChartComponent,
     AddEmployeeComponent,
     EmployeeComponent,
+    CalendarComponent,
+    ProgressIndicatorComponent,
   ],
   imports: [
     HttpClientModule,
+    FullCalendarModule,
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
     FontAwesomeModule,
+    MatProgressSpinnerModule ,
     BsDatepickerModule.forRoot(),
   ],
-  providers: [],
+  providers: [
+    provideAnimationsAsync()
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { 
