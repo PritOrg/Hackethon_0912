@@ -1,79 +1,155 @@
-Before Login (Public/Home Page):
+const mongoose = require('mongoose')
 
-Introduction to the Leave Management System:
+const Approval = new mongoose.Schema({
+    id: String,
+    leaveRequestId: String,
+    approverId: String, // User ID of the approver
+    status: String, // Approved, Rejected, Pending, etc.
+    comments: String,
+    createdAt: Date,
+  });
+module.exports = new mongoose.model('Approval', Approval);
+const mongoose = require('mongoose');
 
-Brief description of the system and its purpose.
-Key features and benefits.
-User Authentication:
+const shiftSchema = new mongoose.Schema({
+  start: { type: String, required: true },
+  end: { type: String, required: true },
+});
 
-Option to log in or sign up for users.
-Any announcements or news related to the system.
-After Login (User Dashboard):
+const contactSchema = new mongoose.Schema({
+  phone: { type: String, required: true },
+  email: { type: String, required: true },
+  fax: { type: String },
+  website: { type: String },
+});
 
-Personalized Dashboard:
+const addressSchema = new mongoose.Schema({
+  street: { type: String, required: true },
+  city: { type: String, required: true },
+  state: { type: String, required: true },
+  zipCode: { type: String, required: true },
+  country: { type: String, required: true },
+});
 
-Overview of pending leaves, upcoming holidays, or important notices.
-Quick links to frequently used features.
-Apply for Leave:
+const companySchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  type: { type: String, required: true },
+  industry: { type: String, required: true }, // Added industry field
+  registrationNumber: { type: String, unique: true, required: true }, // Added registration number
+  logo: { type: String }, // URL to company logo
+  description: { type: String }, // Added company description
+  establishedDate: { type: Date, required: true }, // Added established date
+  holidays: { type: [String], required: true },
+  shifts: { type: [shiftSchema], required: true },
+  departments: { type: [String], required: true },
+  address: { type: addressSchema, required: true },
+  contact: { type: contactSchema, required: true },
+  adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true },
+  createdAt: { type: Date, default: Date.now }, // Added creation date
+  updatedAt: { type: Date, default: Date.now }, // Added updated date
+});
 
-A form to submit leave requests, specifying details like start/end date, reason, etc.
-Leave History:
+module.exports = mongoose.model('Company', companySchema);
+const mongoose = require('mongoose');
 
-View a history of past leave requests with their status (approved, pending, rejected).
-Profile Management:
+const leaveRequestSchema = new mongoose.Schema({
+  startDate: Date,
+  endDate: Date,
+  status: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' },
+  reason: String,
+  leaveType: { type: String, enum: ['Half Day', 'Full Day', 'Sick Leave', 'Casual Leave', 'Maternity Leave', 'Annual Leave', 'Privilege Leave'] },
+  approverId: String, // User ID of the approver
+  approverComment: String, // Comment by the approver
+  acceptedDate: Date, // Date when the request was accepted
+  createdAt: { type: Date, default: Date.now }, // Creation date of the leave request
+});
 
-Update personal information, password, and contact details.
-Notification Center:
+const leaveBalanceSchema = new mongoose.Schema({
+  annualLeave: { type: Number, default: 0 },
+  maternityLeave: { type: Number, default: 0 },
+  privilegeLeave: { type: Number, default: 0 },
+  halfDayLeave: { type: Number, default: 0 },
+  casualLeave: { type: Number, default: 0 },
+  sickLeave: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now },
+});
 
-Receive alerts for leave approvals, rejections, or other important system notifications.
-For Admin:
+const employeeSchema = new mongoose.Schema({
+  // Personal Information
+  username: { type: String, required: true },
+  email: { type: String, unique: true, required: true }, // Ensure email uniqueness
+  password: { type: String, required: true },
+  firstName: { type: String, required: true },
+  middleName: String,
+  lastName: { type: String, required: true },
+  birthdate: { type: Date, required: true }, // Birthdate of the employee
+  profilePic: String, // URL to profile picture
+  phoneNumber: { type: String, required: true }, // Added phone number
+  address: { // Added address
+    street: String,
+    city: String,
+    state: String,
+    zipCode: String,
+    country: String,
+  },
+  emergencyContact: { // Added emergency contact
+    name: String,
+    relationship: String,
+    phoneNumber: String,
+  },
+  // Organizational Information
+  role: { type: String, required: true },
+  joiningDate: { type: Date, required: true },
+  expertise: [String], // Array of expertise fields
+  projects: [String], // Array of projects
+  achievements: [String], // Array of achievements
+  jobShift: { type: String, enum: ['Morning', 'Evening', 'Night'], required: true },
+  leaveRequests: [leaveRequestSchema],
+  leaveBalance: leaveBalanceSchema,
+  specialRemarks: String,
+  salary: {
+    type: Map,
+    of: Number,
+    required: true,
+  },
+  department: { type: String, required: true }, // Added department
+  position: { type: String, required: true }, // Added position
+  supervisorId: String, // Added supervisor ID
+  createdAt: { type: Date, default: Date.now }, // Added creation date
+});
 
-Admin Dashboard:
+module.exports = mongoose.model('Employee', employeeSchema);
+const mongoose = require('mongoose')
 
-Overview of leave requests, recent activities, and system statistics.
-Manage Leave Requests:
+const Holiday = new mongoose.Schema({
+    "id": String,
+    "name": String,
+    "date": Date,
+    "createdAt": Date,
+  });
+  module.exports = new mongoose.model('Holiday' , Holiday);
+const mongoose = require('mongoose')
 
-View, approve, or reject leave requests submitted by users.
-User Management:
+const leaveRequest = new mongoose.Schema({
+  "employeeId": String, // Employee making the request
+    "startDate": Date,
+    "endDate": Date,
+    "status": String, // Pending, Approved, Rejected, etc.
+    "reason": String,
+    "createdAt": Date,
+    "leaveType": String,
+  });
+  module.exports = leaveRequest;
+const mongoose = require('mongoose')
 
-View and manage user profiles.
-Grant or revoke user roles.
-System Configuration:
-
-Configure leave types, holiday calendars, and other system settings.
-Reports and Analytics:
-
-Generate reports on leave trends, user activities, etc.
-To check if an admin is logged in:
-
-User Roles:
-
-Assign roles to users during the signup process.
-Have a role attribute in the user profile (e.g., "user" and "admin").
-Authentication Middleware:
-
-Use middleware to check the user's role during authentication.
-Redirect users to different dashboards based on their roles.
-Route Guards:
-
-Implement route guards in Angular to protect admin routes from unauthorized access.
-Admin Home Page:
-
-Admin Dashboard:
-
-Display an overview of pending leave requests, recent activities, and system statistics.
-Quick links to key admin functionalities.
-Leave Management:
-
-Dedicated sections to manage leave requests, view leave history, and handle user profiles.
-System Configuration:
-
-Access to settings for configuring leave types, holiday calendars, and other system parameters.
-Reports and Analytics:
-
-Tools to generate and analyze reports on leave trends, user activities, etc.
-
-
+const Notification = new mongoose.Schema({
+    "id" : String,
+    "userId" : String,
+    "message" : String,
+    "isRead" : Boolean,
+    "createdAt" : Date,
+  });
+  module.exports = new mongoose.model('Notification' , Notification);
 
 
 User

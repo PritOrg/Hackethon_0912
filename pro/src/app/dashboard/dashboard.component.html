@@ -1,0 +1,125 @@
+<!-- Time and Attendance Card -->
+<div class="mb-8 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl">
+  <div class="p-10 text-white">
+    <div class="grid md:grid-cols-3 gap-10 items-center">
+      <div class="text-center md:text-left space-y-2">
+        <h2 class="text-5xl font-bold tracking-tight">{{ currentTime | date:'HH:mm:ss' }}</h2>
+        <p class="text-blue-100 text-lg">{{ currentTime | date:'EEEE, MMMM d, y' }}</p>
+      </div>
+
+      <div class="text-center flex flex-col items-center space-y-6">
+        <div class="relative">
+          <div class="inline-flex items-center justify-center h-32 w-32 rounded-full bg-white/20 backdrop-blur-sm transition-transform hover:scale-105">
+            <span class="text-3xl font-bold">{{ workingHours }}</span>
+          </div>
+          <p class="text-blue-100 mt-3 text-lg">Hours Worked Today</p>
+        </div>
+
+        <div class="flex gap-4">
+          <button *ngIf="!clockedIn" (click)="clockIn()"
+            class="px-8 py-3 bg-white text-blue-700 rounded-full font-semibold hover:bg-blue-50 transition-all duration-200 shadow-lg hover:shadow-xl">
+            <i class="fas fa-sign-in-alt mr-2"></i>Clock In
+          </button>
+          <button *ngIf="clockedIn" (click)="clockOut()"
+            class="px-8 py-3 bg-red-500 text-white rounded-full font-semibold hover:bg-red-600 transition-all duration-200 shadow-lg hover:shadow-xl">
+            <i class="fas fa-sign-out-alt mr-2"></i>Clock Out
+          </button>
+        </div>
+      </div>
+
+      <div class="text-center md:text-right" *ngIf="todayAttendance">
+        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 transition-all duration-300 hover:bg-white/15">
+          <h4 class="text-blue-100 mb-3 text-lg">Today's Status</h4>
+          <p class="text-2xl font-bold mb-2">
+            {{ clockedIn ? 'Currently Working' : 'Checked Out' }}
+          </p>
+          <p class="text-blue-100">
+            Clocked in at {{ todayAttendance.clockIn | date:'HH:mm:ss' }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Dashboard Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  <!-- Quick Stats -->
+  <div class="p-8 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl" 
+       [ngClass]="isDarkMode ? 'bg-gray-800 hover:bg-gray-750' : 'bg-white hover:bg-gray-50'">
+    <h3 class="text-xl font-bold mb-6" [ngClass]="isDarkMode ? 'text-white' : 'text-gray-900'">
+      Quick Stats
+    </h3>
+    <div class="space-y-6">
+      <div class="flex justify-between items-center">
+        <span [ngClass]="isDarkMode ? 'text-gray-300' : 'text-gray-600'">Total Employees</span>
+        <span class="text-lg font-bold" [ngClass]="isDarkMode ? 'text-white' : 'text-gray-900'">
+          {{ quickStats.totalEmployees }}
+        </span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span [ngClass]="isDarkMode ? 'text-gray-300' : 'text-gray-600'">On Leave Today</span>
+        <span class="text-lg font-bold" [ngClass]="isDarkMode ? 'text-white' : 'text-gray-900'">
+          {{ quickStats.onLeaveToday }}
+        </span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span [ngClass]="isDarkMode ? 'text-gray-300' : 'text-gray-600'">Active Projects</span>
+        <span class="text-lg font-bold" [ngClass]="isDarkMode ? 'text-white' : 'text-gray-900'">
+          {{ quickStats.activeProjects }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upcoming Birthdays -->
+  <div class="p-8 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl" 
+       [ngClass]="isDarkMode ? 'bg-gray-800 hover:bg-gray-750' : 'bg-white hover:bg-gray-50'">
+    <h3 class="text-xl font-bold mb-6" [ngClass]="isDarkMode ? 'text-white' : 'text-gray-900'">
+      Upcoming Birthdays
+    </h3>
+    <div class="space-y-6">
+      <div *ngFor="let birthday of upcomingBirthdays" 
+           class="flex items-center gap-4 transition-all duration-200 hover:translate-x-2">
+        <img [src]="birthday.avatar" [alt]="birthday.name" 
+             class="w-12 h-12 rounded-full ring-2 ring-offset-2" 
+             [ngClass]="isDarkMode ? 'ring-blue-500' : 'ring-blue-400'" />
+        <div>
+          <p class="font-semibold" [ngClass]="isDarkMode ? 'text-white' : 'text-gray-900'">
+            {{ birthday.name }}
+          </p>
+          <p class="text-sm" [ngClass]="isDarkMode ? 'text-gray-400' : 'text-gray-500'">
+            {{ birthday.date }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="p-8 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl" 
+       [ngClass]="isDarkMode ? 'bg-gray-800 hover:bg-gray-750' : 'bg-white hover:bg-gray-50'">
+    <h3 class="text-xl font-bold mb-6" [ngClass]="isDarkMode ? 'text-white' : 'text-gray-900'">
+      Recent Activity
+    </h3>
+    <div class="space-y-6">
+      <div *ngFor="let activity of recentActivity" 
+           class="flex items-start gap-4 transition-all duration-200 hover:translate-x-2">
+        <i class="fas text-xl mt-1" 
+           [ngClass]="{
+             'fa-exclamation-circle text-blue-500': activity.type === 'leave',
+             'fa-check-circle text-green-500': activity.type === 'project'
+           }">
+        </i>
+        <div>
+          <p class="font-semibold" [ngClass]="isDarkMode ? 'text-white' : 'text-gray-900'">
+            {{ activity.user }}
+          </p>
+          <p class="text-sm" [ngClass]="isDarkMode ? 'text-gray-400' : 'text-gray-500'">
+            {{ activity.status }} • {{ activity.date }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

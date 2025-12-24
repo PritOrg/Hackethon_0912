@@ -17,7 +17,7 @@ const routes: Routes = [
   { path: 'sign-in', component: SignInComponent },
   { path: 'sign-up', component: SignUpComponent },
   { path: '', component: HomeComponent },
-  { path: 'admin/add-employee', component: AddEmployeeComponent, canActivate: [AdminGuard] },
+  { path: 'admin/add-employee', component: AddEmployeeComponent, },
   { path: 'admin/employees', component: EmployeeComponent, canActivate: [AdminGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'apply-leave', component: ApplyLeaveComponent, canActivate: [AuthGuard] },

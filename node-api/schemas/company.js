@@ -23,19 +23,19 @@ const addressSchema = new mongoose.Schema({
 const companySchema = new mongoose.Schema({
   name: { type: String, required: true },
   type: { type: String, required: true },
-  industry: { type: String, required: true }, // Added industry field
-  registrationNumber: { type: String, unique: true, required: true }, // Added registration number
-  logo: { type: String }, // URL to company logo
-  description: { type: String }, // Added company description
-  establishedDate: { type: Date, required: true }, // Added established date
+  industry: { type: String, required: true }, 
+  registrationNumber: { type: String, unique: true, required: true }, 
+  logo: { type: String },
+  description: { type: String },
+  establishedDate: { type: Date, required: true },
   holidays: { type: [String], required: true },
   shifts: { type: [shiftSchema], required: true },
   departments: { type: [String], required: true },
   address: { type: addressSchema, required: true },
   contact: { type: contactSchema, required: true },
-  adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true },
-  createdAt: { type: Date, default: Date.now }, // Added creation date
-  updatedAt: { type: Date, default: Date.now }, // Added updated date
+  admins: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Employee', required: true }], // Array of admin IDs
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model('Company', companySchema);

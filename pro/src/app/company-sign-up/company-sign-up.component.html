@@ -1,0 +1,242 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
+    <div class="bg-white shadow-2xl rounded-2xl w-full max-w-3xl">
+      <!-- Progress Bar -->
+      <div class="p-6 border-b border-gray-100">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl font-bold text-gray-800">Company Registration</span>
+            <span class="px-3 py-1 text-sm bg-blue-50 text-blue-600 rounded-full">Step {{step}} of 3</span>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="flex-1">
+            <div class="h-2 rounded-full" [ngClass]="step >= 1 ? 'bg-blue-500' : 'bg-gray-200'"></div>
+          </div>
+          <div class="flex-1">
+            <div class="h-2 rounded-full" [ngClass]="step >= 2 ? 'bg-blue-500' : 'bg-gray-200'"></div>
+          </div>
+          <div class="flex-1">
+            <div class="h-2 rounded-full" [ngClass]="step === 3 ? 'bg-blue-500' : 'bg-gray-200'"></div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="p-8">
+        <!-- Step 1: Basic Information -->
+        <div *ngIf="step === 1" class="space-y-6">
+          <div class="flex items-center space-x-3 mb-6">
+            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+              <i class="fas fa-building text-blue-600"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800">Company Details</h2>
+          </div>
+  
+          <form [formGroup]="basicInfo" class="space-y-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Company Name -->
+              <div class="form-group">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
+                <input formControlName="name" type="text"
+                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                       placeholder="Enter company name">
+                <div *ngIf="basicInfo.get('name')?.invalid && (basicInfo.get('name')?.dirty || basicInfo.get('name')?.touched)"
+                     class="text-sm text-red-600 mt-1">
+                  Company name is required.
+                </div>
+              </div>
+  
+              <!-- Company Type -->
+              <div class="form-group">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Company Type</label>
+                <select formControlName="type"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                  <option value="" disabled>Select company type</option>
+                  <option value="Private">Private Limited</option>
+                  <option value="Public">Public Limited</option>
+                  <option value="Non-Profit">Non-Profit Organization</option>
+                </select>
+                <div *ngIf="basicInfo.get('type')?.invalid && (basicInfo.get('type')?.dirty || basicInfo.get('type')?.touched)"
+                     class="text-sm text-red-600 mt-1">
+                  Company type is required.
+                </div>
+              </div>
+  
+              <!-- Industry -->
+              <div class="form-group">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Industry</label>
+                <input formControlName="industry" type="text"
+                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                       placeholder="e.g. Technology, Healthcare">
+                <div *ngIf="basicInfo.get('industry')?.invalid && (basicInfo.get('industry')?.dirty || basicInfo.get('industry')?.touched)"
+                     class="text-sm text-red-600 mt-1">
+                  Industry is required.
+                </div>
+              </div>
+  
+              <!-- Registration Number -->
+              <div class="form-group">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Registration Number</label>
+                <input formControlName="registrationNumber" type="text"
+                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                       placeholder="Enter registration number">
+                <div *ngIf="basicInfo.get('registrationNumber')?.invalid && (basicInfo.get('registrationNumber')?.dirty || basicInfo.get('registrationNumber')?.touched)"
+                     class="text-sm text-red-600 mt-1">
+                  Registration number is required.
+                </div>
+              </div>
+  
+              <!-- Established Date -->
+              <div class="form-group md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Established Date</label>
+                <input formControlName="establishedDate" type="date"
+                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                <div *ngIf="basicInfo.get('establishedDate')?.invalid && (basicInfo.get('establishedDate')?.dirty || basicInfo.get('establishedDate')?.touched)"
+                     class="text-sm text-red-600 mt-1">
+                  Established date is required.
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+  
+        <!-- Step 2: Contact Information -->
+        <div *ngIf="step === 2" class="space-y-6">
+          <div class="flex items-center space-x-3 mb-6">
+            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+              <i class="fas fa-phone-alt text-blue-600"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800">Contact Information</h2>
+          </div>
+  
+          <form [formGroup]="contactInfo" class="space-y-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Phone Number -->
+              <div class="form-group">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                <input formControlName="phone" type="tel"
+                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                       placeholder="+1 (234) 567-8900">
+                <div *ngIf="contactInfo.get('phone')?.invalid && (contactInfo.get('phone')?.dirty || contactInfo.get('phone')?.touched)"
+                     class="text-sm text-red-600 mt-1">
+                  Phone number is required.
+                </div>
+              </div>
+  
+              <!-- Email Address -->
+              <div class="form-group">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                <input formControlName="email" type="email"
+                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                       placeholder="company@example.com">
+                <div *ngIf="contactInfo.get('email')?.invalid && (contactInfo.get('email')?.dirty || contactInfo.get('email')?.touched)"
+                     class="text-sm text-red-600 mt-1">
+                  Valid email is required.
+                </div>
+              </div>
+  
+              <!-- Website -->
+              <div class="form-group md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Website</label>
+                <input formControlName="website" type="url"
+                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                       placeholder="https://www.example.com">
+                <div *ngIf="contactInfo.get('website')?.invalid && (contactInfo.get('website')?.dirty || contactInfo.get('website')?.touched)"
+                     class="text-sm text-red-600 mt-1">
+                  Valid URL is required.
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+  
+        <!-- Step 3: Address Information -->
+        <div *ngIf="step === 3" class="space-y-6">
+          <div class="flex items-center space-x-3 mb-6">
+            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+              <i class="fas fa-map-marker-alt text-blue-600"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800">Address Details</h2>
+          </div>
+  
+          <form [formGroup]="addressInfo" class="space-y-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Street Address -->
+              <div class="form-group md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Street Address</label>
+                <input formControlName="street" type="text"
+                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                       placeholder="Enter street address">
+                <div *ngIf="addressInfo.get('street')?.invalid && (addressInfo.get('street')?.dirty || addressInfo.get('street')?.touched)"
+                     class="text-sm text-red-600 mt-1">
+                  Street address is required.
+                </div>
+              </div>
+  
+              <!-- City -->
+              <div class="form-group">
+                <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
+                <input formControlName="city" type="text"
+                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                       placeholder="Enter city">
+                <div *ngIf="addressInfo.get('city')?.invalid && (addressInfo.get('city')?.dirty || addressInfo.get('city')?.touched)"
+                     class="text-sm text-red-600 mt-1">
+                  City is required.
+                </div>
+              </div>
+  
+              <!-- State -->
+              <div class="form-group">
+                <label class="block text-sm font-medium text-gray-700 mb-2">State</label>
+                <input formControlName="state" type="text"
+                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                       placeholder="Enter state">
+                <div *ngIf="addressInfo.get('state')?.invalid && (addressInfo.get('state')?.dirty || addressInfo.get('state')?.touched)"
+                     class="text-sm text-red-600 mt-1">
+                  State is required.
+                </div>
+              </div>
+  
+              <!-- Postal Code -->
+              <div class="form-group">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Postal Code</label>
+                <input formControlName="zipCode" type="text"
+                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                       placeholder="Enter postal code">
+                <div *ngIf="addressInfo.get('zipCode')?.invalid && (addressInfo.get('zipCode')?.dirty || addressInfo.get('zipCode')?.touched)"
+                     class="text-sm text-red-600 mt-1">
+                  Postal code is required.
+                </div>
+              </div>
+  
+              <!-- Country -->
+              <div class="form-group">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Country</label>
+                <input formControlName="country" type="text"
+                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                       placeholder="Enter country">
+                <div *ngIf="addressInfo.get('country')?.invalid && (addressInfo.get('country')?.dirty || addressInfo.get('country')?.touched)"
+                     class="text-sm text-red-600 mt-1">
+                  Country is required.
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+  
+      <!-- Navigation Buttons -->
+      <div class="px-8 pb-8 flex" [ngClass]="step === 1 ? 'justify-end' : 'justify-between'">
+        <button *ngIf="step > 1" (click)="prevStep()"
+                class="flex items-center px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-200">
+          <i class="fas fa-arrow-left mr-2"></i> Previous
+        </button>
+  
+        <button (click)="step === 3 ? onSubmit() : nextStep()"
+                [disabled]="(step === 1 && basicInfo.invalid) || (step === 2 && contactInfo.invalid) || (step === 3 && addressInfo.invalid)"
+                class="flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed">
+          <span>{{ step === 3 ? 'Submit' : 'Next' }}</span>
+          <i *ngIf="step !== 3" class="fas fa-arrow-right ml-2"></i>
+        </button>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,561 @@
+<div class="p-6">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold" [ngClass]="isDarkMode ? 'text-white' : 'text-slate-800'">
+        {{ isEditMode ? 'Edit Employee' : 'Add New Employee' }}
+      </h1>
+      <p class="mt-2 text-sm" [ngClass]="isDarkMode ? 'text-slate-400' : 'text-slate-500'">
+        {{ isEditMode ? 'Update employee information in the system' : 'Register a new employee in the system' }}
+      </p>
+    </div>
+  
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center my-8">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+    </div>
+  
+    <!-- Form Error -->
+    <div *ngIf="submitError" class="mb-6 p-4 rounded-lg bg-red-100 border border-red-200 text-red-800">
+      <p class="flex items-center">
+        <i class="fas fa-exclamation-circle mr-2"></i>
+        {{ submitError }}
+      </p>
+    </div>
+  
+    <!-- Form Container -->
+    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" *ngIf="!loading" class="space-y-6">
+      
+      <!-- Section Navigation -->
+      <div class="flex overflow-x-auto pb-3 mb-2 gap-2 border-b" [ngClass]="isDarkMode ? 'border-slate-700' : 'border-slate-200'">
+        <button 
+          type="button" 
+          *ngFor="let section of sections"
+          (click)="toggleSection(section)"
+          class="px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap"
+          [ngClass]="activeSections[section] ? 
+                    'bg-blue-600 text-white shadow-md' : 
+                    (isDarkMode ? 'text-slate-300 hover:bg-slate-700' : 'text-slate-600 hover:bg-slate-100')">
+          {{ section | titlecase }} Information
+        </button>
+      </div>
+  
+      <!-- Personal Information Section -->
+      <div *ngIf="activeSections.personal" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="md:col-span-2">
+          <h2 class="text-xl font-semibold mb-4" [ngClass]="isDarkMode ? 'text-white' : 'text-slate-800'">
+            Personal Information
+          </h2>
+        </div>
+  
+        <!-- Profile Picture Upload -->
+        <div class="md:col-span-2 flex flex-col items-center p-6 border rounded-xl" 
+             [ngClass]="isDarkMode ? 'bg-slate-700/30 border-slate-600' : 'bg-slate-50 border-slate-200'">
+          <div class="h-28 w-28 rounded-full overflow-hidden mb-4 bg-slate-200 flex items-center justify-center"
+               [ngClass]="isDarkMode ? 'bg-slate-600' : 'bg-slate-200'">
+            <img *ngIf="employeeForm.get('profilePic')?.value" [src]="employeeForm.get('profilePic')?.value" class="h-full w-full object-cover" alt="Profile Image">
+            <i *ngIf="!employeeForm.get('profilePic')?.value" class="fas fa-user text-4xl" [ngClass]="isDarkMode ? 'text-slate-400' : 'text-slate-400'"></i>
+          </div>
+          <label class="mb-1 px-4 py-2 rounded-lg text-sm font-medium cursor-pointer transition-all duration-200"
+                 [ngClass]="isDarkMode ? 'bg-slate-600 text-white hover:bg-slate-500' : 'bg-blue-50 text-blue-700 hover:bg-blue-100'">
+            <span>Upload Photo</span>
+            <input type="file" class="hidden" accept="image/\*">
+          </label>
+          <p class="text-xs mt-2" [ngClass]="isDarkMode ? 'text-slate-400' : 'text-slate-500'">
+            Recommended size: 300x300px, Max: 2MB
+          </p>
+        </div>
+  
+        <!-- Name Fields -->
+        <div class="form-group">
+          <label for="firstName" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+            First Name *
+          </label>
+          <input 
+            type="text" 
+            id="firstName" 
+            formControlName="firstName" 
+            class="form-input"
+            [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+            placeholder="John">
+          <div *ngIf="employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched" 
+               class="text-red-500 text-xs mt-1">
+            First name is required
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="middleName" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+            Middle Name
+          </label>
+          <input 
+            type="text" 
+            id="middleName" 
+            formControlName="middleName" 
+            class="form-input"
+            [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+            placeholder="David">
+        </div>
+  
+        <div class="form-group">
+          <label for="lastName" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+            Last Name *
+          </label>
+          <input 
+            type="text" 
+            id="lastName" 
+            formControlName="lastName" 
+            class="form-input"
+            [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+            placeholder="Doe">
+          <div *ngIf="employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched" 
+               class="text-red-500 text-xs mt-1">
+            Last name is required
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="birthdate" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+            Date of Birth *
+          </label>
+          <input 
+            type="date" 
+            id="birthdate" 
+            formControlName="birthdate" 
+            class="form-input"
+            [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'">
+          <div *ngIf="employeeForm.get('birthdate')?.invalid && employeeForm.get('birthdate')?.touched" 
+               class="text-red-500 text-xs mt-1">
+            Date of birth is required
+          </div>
+        </div>
+      </div>
+  
+      <!-- Contact Information Section -->
+      <div *ngIf="activeSections.contact" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="md:col-span-2">
+          <h2 class="text-xl font-semibold mb-4" [ngClass]="isDarkMode ? 'text-white' : 'text-slate-800'">
+            Contact Information
+          </h2>
+        </div>
+  
+        <div class="form-group">
+          <label for="email" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+            Email Address *
+          </label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            class="form-input"
+            [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+            placeholder="john.doe@example.com">
+          <div *ngIf="employeeForm.get('email')?.invalid && employeeForm.get('email')?.touched" 
+               class="text-red-500 text-xs mt-1">
+            Valid email is required
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="phoneNumber" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+            Phone Number *
+          </label>
+          <input 
+            type="tel" 
+            id="phoneNumber" 
+            formControlName="phoneNumber" 
+            class="form-input"
+            [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+            placeholder="+1 (123) 456-7890">
+          <div *ngIf="employeeForm.get('phoneNumber')?.invalid && employeeForm.get('phoneNumber')?.touched" 
+               class="text-red-500 text-xs mt-1">
+            Phone number is required
+          </div>
+        </div>
+  
+        <div class="md:col-span-2 form-group">
+          <label for="address" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+            Address *
+          </label>
+          <textarea 
+            id="address" 
+            formControlName="address" 
+            class="form-input min-h-24"
+            [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+            placeholder="123 Main St, Anytown, ST 12345"></textarea>
+          <div *ngIf="employeeForm.get('address')?.invalid && employeeForm.get('address')?.touched" 
+               class="text-red-500 text-xs mt-1">
+            Address is required
+          </div>
+        </div>
+  
+        <!-- Emergency Contact -->
+        <div class="md:col-span-2 p-5 border rounded-xl" 
+             [ngClass]="isDarkMode ? 'bg-slate-700/30 border-slate-600' : 'bg-slate-50 border-slate-200'">
+          <h3 class="text-md font-semibold mb-4" [ngClass]="isDarkMode ? 'text-white' : 'text-slate-800'">
+            Emergency Contact
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4" formGroupName="emergencyContact">
+            <div class="form-group">
+              <label for="ecName" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+                Contact Name *
+              </label>
+              <input 
+                type="text" 
+                id="ecName" 
+                formControlName="name" 
+                class="form-input"
+                [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+                placeholder="Jane Doe">
+            </div>
+            <div class="form-group">
+              <label for="ecRelationship" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+                Relationship *
+              </label>
+              <input 
+                type="text" 
+                id="ecRelationship" 
+                formControlName="relationship" 
+                class="form-input"
+                [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+                placeholder="Spouse">
+            </div>
+            <div class="form-group">
+              <label for="ecPhone" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+                Phone Number *
+              </label>
+              <input 
+                type="tel" 
+                id="ecPhone" 
+                formControlName="phoneNumber" 
+                class="form-input"
+                [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+                placeholder="+1 (123) 456-7890">
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Employment Details Section -->
+      <div *ngIf="activeSections.employment" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="md:col-span-2">
+          <h2 class="text-xl font-semibold mb-4" [ngClass]="isDarkMode ? 'text-white' : 'text-slate-800'">
+            Employment Details
+          </h2>
+        </div>
+  
+        <div class="form-group">
+          <label for="companyId" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+            Company ID *
+          </label>
+          <input 
+            type="text" 
+            id="companyId" 
+            formControlName="companyId" 
+            class="form-input"
+            [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+            placeholder="EMP12345">
+          <div *ngIf="employeeForm.get('companyId')?.invalid && employeeForm.get('companyId')?.touched" 
+               class="text-red-500 text-xs mt-1">
+            Company ID is required
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="joiningDate" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+            Joining Date *
+          </label>
+          <input 
+            type="date" 
+            id="joiningDate" 
+            formControlName="joiningDate" 
+            class="form-input"
+            [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'">
+          <div *ngIf="employeeForm.get('joiningDate')?.invalid && employeeForm.get('joiningDate')?.touched" 
+               class="text-red-500 text-xs mt-1">
+            Joining date is required
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="department" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+            Department *
+          </label>
+          <select 
+            id="department" 
+            formControlName="department" 
+            class="form-input"
+            [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'">
+            <option value="" disabled selected>Select Department</option>
+            <option *ngFor="let dept of departments$ | async" [value]="dept._id">{{ dept.name }}</option>
+          </select>
+          <div *ngIf="employeeForm.get('department')?.invalid && employeeForm.get('department')?.touched" 
+               class="text-red-500 text-xs mt-1">
+            Department is required
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="position" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+            Position *
+          </label>
+          <select 
+            id="position" 
+            formControlName="position" 
+            class="form-input"
+            [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'">
+            <option value="" disabled selected>Select Position</option>
+            <option *ngFor="let pos of positions$ | async" [value]="pos._id">{{ pos.name }}</option>
+          </select>
+          <div *ngIf="employeeForm.get('position')?.invalid && employeeForm.get('position')?.touched" 
+               class="text-red-500 text-xs mt-1">
+            Position is required
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="role" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+            Role *
+          </label>
+          <select 
+            id="role" 
+            formControlName="role" 
+            class="form-input"
+            [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'">
+            <option value="" disabled selected>Select Role</option>
+            <option value="admin">Administrator</option>
+            <option value="manager">Manager</option>
+            <option value="employee">Employee</option>
+            <option value="intern">Intern</option>
+          </select>
+          <div *ngIf="employeeForm.get('role')?.invalid && employeeForm.get('role')?.touched" 
+               class="text-red-500 text-xs mt-1">
+            Role is required
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="jobShift" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+            Job Shift *
+          </label>
+          <select 
+            id="jobShift" 
+            formControlName="jobShift" 
+            class="form-input"
+            [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'">
+            <option value="" disabled selected>Select Shift</option>
+            <option value="morning">Morning (9AM - 5PM)</option>
+            <option value="evening">Evening (2PM - 10PM)</option>
+            <option value="night">Night (10PM - 6AM)</option>
+            <option value="flexible">Flexible Hours</option>
+            <option value="remote">Remote</option>
+          </select>
+          <div *ngIf="employeeForm.get('jobShift')?.invalid && employeeForm.get('jobShift')?.touched" 
+               class="text-red-500 text-xs mt-1">
+            Job shift is required
+          </div>
+        </div>
+  
+        <!-- Expertise, Projects, Achievements sections would go here -->
+        <!-- They would use formArrays and dynamic form controls -->
+      </div>
+  
+      <!-- Compensation & Benefits Section -->
+      <div *ngIf="activeSections.compensation" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="md:col-span-2">
+          <h2 class="text-xl font-semibold mb-4" [ngClass]="isDarkMode ? 'text-white' : 'text-slate-800'">
+            Compensation & Benefits
+          </h2>
+        </div>
+  
+        <div class="form-group">
+          <label for="salary" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+            Salary (Annual) *
+          </label>
+          <div class="relative">
+            <span class="absolute left-3 top-2.5" [ngClass]="isDarkMode ? 'text-slate-400' : 'text-slate-500'">$</span>
+            <input 
+              type="number" 
+              id="salary" 
+              formControlName="salary" 
+              class="form-input pl-8"
+              [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+              placeholder="60000">
+          </div>
+          <div *ngIf="employeeForm.get('salary')?.invalid && employeeForm.get('salary')?.touched" 
+               class="text-red-500 text-xs mt-1">
+            Valid salary is required
+          </div>
+        </div>
+  
+        <!-- Leave Balance -->
+        <div class="md:col-span-2 p-5 border rounded-xl" 
+             [ngClass]="isDarkMode ? 'bg-slate-700/30 border-slate-600' : 'bg-slate-50 border-slate-200'">
+          <h3 class="text-md font-semibold mb-4" [ngClass]="isDarkMode ? 'text-white' : 'text-slate-800'">
+            Leave Balance
+          </h3>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4" formGroupName="leaveBalance">
+            <div class="form-group">
+              <label for="annualLeave" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+                Annual Leave
+              </label>
+              <input 
+                type="number" 
+                id="annualLeave" 
+                formControlName="annualLeave" 
+                class="form-input"
+                [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+                placeholder="0">
+            </div>
+            <div class="form-group">
+              <label for="sickLeave" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+                Sick Leave
+              </label>
+              <input 
+                type="number" 
+                id="sickLeave" 
+                formControlName="sickLeave" 
+                class="form-input"
+                [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+                placeholder="0">
+            </div>
+            <div class="form-group">
+              <label for="casualLeave" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+                Casual Leave
+              </label>
+              <input 
+                type="number" 
+                id="casualLeave" 
+                formControlName="casualLeave" 
+                class="form-input"
+                [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+                placeholder="0">
+            </div>
+            <div class="form-group">
+              <label for="maternityLeave" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+                Maternity Leave
+              </label>
+              <input 
+                type="number" 
+                id="maternityLeave" 
+                formControlName="maternityLeave" 
+                class="form-input"
+                [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+                placeholder="0">
+            </div>
+            <div class="form-group">
+              <label for="privilegeLeave" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+                Privilege Leave
+              </label>
+              <input 
+                type="number" 
+                id="privilegeLeave" 
+                formControlName="privilegeLeave" 
+                class="form-input"
+                [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+                placeholder="0">
+            </div>
+            <div class="form-group">
+              <label for="halfDayLeave" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+                Half-Day Leave
+              </label>
+              <input 
+                type="number" 
+                id="halfDayLeave" 
+                formControlName="halfDayLeave" 
+                class="form-input"
+                [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+                placeholder="0">
+            </div>
+          </div>
+        </div>
+  
+        <div class="md:col-span-2 form-group">
+          <label for="specialRemarks" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+            Special Remarks
+          </label>
+          <textarea 
+            id="specialRemarks" 
+            formControlName="specialRemarks" 
+            class="form-input min-h-24"
+            [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+            placeholder="Any special notes or comments about this employee"></textarea>
+        </div>
+      </div>
+  
+      <!-- Account Credentials Section -->
+      <div *ngIf="activeSections.credentials" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="md:col-span-2">
+          <h2 class="text-xl font-semibold mb-4" [ngClass]="isDarkMode ? 'text-white' : 'text-slate-800'">
+            Account Credentials
+          </h2>
+          <div *ngIf="isEditMode" class="p-4 mb-4 rounded-lg bg-amber-100 border border-amber-200 text-amber-800">
+            <p class="flex items-center">
+              <i class="fas fa-info-circle mr-2"></i>
+              For security reasons, password cannot be edited here. Employee should use the password reset function.
+            </p>
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="username" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+            Username *
+          </label>
+          <input 
+            type="text" 
+            id="username" 
+            formControlName="username" 
+            class="form-input"
+            [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+            placeholder="johndoe"
+            [attr.disabled]="isEditMode ? true : null">
+          <div *ngIf="employeeForm.get('username')?.invalid && employeeForm.get('username')?.touched && !isEditMode" 
+               class="text-red-500 text-xs mt-1">
+            Username is required
+          </div>
+        </div>
+  
+        <div class="form-group" *ngIf="!isEditMode">
+          <label for="password" class="form-label" [ngClass]="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+            Password *
+          </label>
+          <div class="relative">
+            <input 
+              type="password" 
+              id="password" 
+              formControlName="password" 
+              class="form-input pr-10"
+              [ngClass]="isDarkMode ? 'bg-slate-700 border-slate-600 text-white focus:border-blue-500' : 'bg-white border-slate-300 text-slate-900 focus:border-blue-500'"
+              placeholder="••••••••">
+            <button type="button" class="absolute right-3 top-2.5" [ngClass]="isDarkMode ? 'text-slate-400' : 'text-slate-500'">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <div *ngIf="employeeForm.get('password')?.invalid && employeeForm.get('password')?.touched" 
+               class="text-red-500 text-xs mt-1">
+            Password must be at least 8 characters
+          </div>
+        </div>
+      </div>
+  
+      <!-- Form Actions -->
+      <div class="mt-8 flex flex-col sm:flex-row sm:justify-end gap-3">
+        <button 
+          type="button" 
+          routerLink="/employees" 
+          class="px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200"
+          [ngClass]="isDarkMode ? 'bg-slate-700 text-white hover:bg-slate-600' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'">
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          [disabled]="employeeForm.invalid || loading"
+          class="px-5 py-2.5 rounded-lg text-sm font-medium text-white transition-all duration-200 flex items-center justify-center"
+          [ngClass]="employeeForm.invalid || loading ? 
+                    'bg-blue-400 cursor-not-allowed' : 
+                    'bg-blue-600 hover:bg-blue-700'">
+          <span *ngIf="loading" class="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent"></span>
+          {{ isEditMode ? 'Update Employee' : 'Add Employee' }}
+        </button>
+      </div>
+    </form>
+  </div>

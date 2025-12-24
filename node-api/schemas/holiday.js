@@ -1,9 +1,11 @@
 const mongoose = require('mongoose')
 
 const Holiday = new mongoose.Schema({
-    "id": String,
-    "name": String,
-    "date": Date,
-    "createdAt": Date,
-  });
-  module.exports = new mongoose.model('Holiday' , Holiday);
+  companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true },
+
+  "id": String,
+  "name": String,
+  "date": Date,
+  "createdAt": Date,
+});
+module.exports = new mongoose.model('Holiday', Holiday);

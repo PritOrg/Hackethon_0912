@@ -1,6 +1,7 @@
 // auth.middleware.js
 
 const jwt = require('jsonwebtoken');
+const config = require('../config/environment');
 
 module.exports = (req, res, next) => {
     // Extract the token from the request headers or cookies
@@ -12,7 +13,7 @@ module.exports = (req, res, next) => {
 
     try {
         // Verify the token and attach user details to the request
-        const decodedToken = jwt.verify(token, 'your-secret-key');
+        const decodedToken = jwt.verify(token, config.security.jwtSecret);
         req.user = { id: decodedToken.userId, email: decodedToken.email };
         next();
     } catch (error) {

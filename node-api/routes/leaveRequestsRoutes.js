@@ -2,149 +2,202 @@ const express = require('express');
 const router = express.Router();
 const { Types } = require('mongoose');
 const { ObjectId } = Types;
-const Employee = require('../schemas/employee');
-
-async function updateLeaveBalanceForAllEmployees(leaveType, newLeaveBalance) {
+const Employee = require('../schemas/employee_v2');
+const LeaveRequest = require('../schemas/leaveRequest_v2');
+//get all requessts from the specific date
+router.get('/company/:companyId', async (req, res) => {
     try {
-        // Retrieve all employees from the database
-        const employees = await Employee.find();
-
-        // Iterate through each employee
-        for (const employee of employees) {
-            // Get the old leave balance for the specified leave type
-            const oldLeaveBalance = employee.leaveBalance[leaveType];
-
-            // Calculate the difference between the old and new leave balance
-            const leaveBalanceDifference = newLeaveBalance - oldLeaveBalance;
-
-            // Update the leave balance for the specified leave type
-            employee.leaveBalance[leaveType] = newLeaveBalance;
-
-            // Adjust the remaining leave balance based on the difference
-            // Only if the leave balance is being increased
-            if (leaveBalanceDifference > 0) {
-                // Add the difference to the remaining leave balance
-                employee.leaveBalance[leaveType] += leaveBalanceDifference;
-            }
-
-            // Save the updated employee back to the database
-            await employee.save();
-        }
-
-        console.log(`Leave balance updated for ${employees.length} employees.`);
+      const { companyId } = req.params;
+      const { date } = req.query;
+  
+      // Validate date
+      if (!date) {
+        return res.status(400).json({ message: 'Date is required' });
+      }
+  
+      // Find all employees in the company
+      const employees = await Employee.find({ companyId });
+  
+      // Extract employee IDs
+      const employeeIds = employees.map((employee) => employee._id);
+  
+      // Find all leave requests for these employees on the specified date
+      const leaveRequests = await LeaveRequest.find({
+        employeeId: { $in: employeeIds },
+        createdAt: { $gte: new Date(date), $lt: new Date(new Date(date).setDate(new Date(date).getDate() + 1)) },
+      });
+  
+      res.json(leaveRequests);
     } catch (error) {
-        console.error('Error updating leave balance:', error);
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
-}
-// Get all leave requests for all employees
-router.get('/all-leave-requests', async (req, res) => {
-    try {
-        const allEmployees = await Employee.find({}, 'leaveRequests');
-        const allLeaveRequests = allEmployees.flatMap(employee => employee.leaveRequests);
-        res.json(allLeaveRequests);
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
+  });
 
-
-// Get leave request by ID
+//get specific request
 router.get('/:id', async (req, res) => {
     try {
-        const id = req.params.id;
-
-        if (!ObjectId.isValid(id)) {
-            return res.status(400).json({ message: 'Invalid ID format' });
-        }
-
-        const allEmployees = await Employee.find({}, 'leaveRequests');
-        const allLeaveRequests = allEmployees.flatMap(employee => employee.leaveRequests);
-        const leaveRequest = allLeaveRequests.find(request => request._id.toString() === id);
-
-        if (!leaveRequest) {
-            return res.status(404).json({ message: 'Leave request not found' });
-        }
-
-        res.json(leaveRequest);
+      const { id } = req.params;
+  
+      // Find the leave request
+      const leaveRequest = await LeaveRequest.findById(id);
+  
+      if (!leaveRequest) {
+        return res.status(404).json({ message: 'Leave request not found' });
+      }
+  
+      res.json(leaveRequest);
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
-});
-
-// Apply for leave
-router.post('/:id/apply-leave', async (req, res) => {
+  });
+  
+//Raise a Request
+router.post('/', async (req, res) => {
     try {
-        const employeeId = req.params.id;
-        const leaveRequestData = req.body;
-
-        const objectId = new ObjectId();
-        leaveRequestData._id = objectId;
-
-        const updatedEmployee = await Employee.findByIdAndUpdate(
-            employeeId,
-            { $push: { leaveRequests: leaveRequestData } },
-            { new: true }
-        );
-
-        res.status(201).json(updatedEmployee);
+      const { employeeId, startDate, endDate, reason, leaveType } = req.body;
+  
+      // Validate required fields
+      if (!employeeId || !startDate || !endDate || !reason || !leaveType) {
+        return res.status(400).json({ message: 'Missing required fields' });
+      }
+  
+      // Create a new leave request
+      const newLeaveRequest = new LeaveRequest({
+        employeeId,
+        startDate,
+        endDate,
+        reason,
+        leaveType,
+        status: 'Pending', // Default status
+        createdAt: new Date(),
+      });
+  
+      // Save the leave request
+      await newLeaveRequest.save();
+  
+      // Add the leave request ID to the employee's leaveRequests array
+      await Employee.findByIdAndUpdate(employeeId, {
+        $push: { leaveRequests: newLeaveRequest._id },
+      });
+  
+      res.status(201).json(newLeaveRequest);
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+  });
 
-// Update leave request
+//Edit Request
 router.patch('/:id', async (req, res) => {
-    const id = req.params.id;
-    const updatedData = req.body;
-
     try {
-        const allEmployees = await Employee.find({}, 'leaveRequests');
-        const allLeaveRequests = allEmployees.flatMap(employee => employee.leaveRequests);
-        const leaveRequestIndex = allLeaveRequests.findIndex(request => request._id.toString() === id);
-
-        if (leaveRequestIndex === -1) {
-            return res.status(404).json({ message: 'Leave request not found' });
-        }
-
-        const updatedLeaveRequest = { ...allLeaveRequests[leaveRequestIndex], ...updatedData };
-        allLeaveRequests[leaveRequestIndex] = updatedLeaveRequest;
-
-        // Update the leave requests in the employee document
-        await Employee.updateOne({}, { $set: { leaveRequests: allLeaveRequests } });
-
-        res.json(updatedLeaveRequest);
+      const { id } = req.params;
+      const { startDate, endDate, reason, leaveType } = req.body;
+  
+      // Validate required fields
+      if (!startDate && !endDate && !reason && !leaveType) {
+        return res.status(400).json({ message: 'No fields to update' });
+      }
+  
+      // Find and update the leave request
+      const updatedLeaveRequest = await LeaveRequest.findByIdAndUpdate(
+        id,
+        { startDate, endDate, reason, leaveType },
+        { new: true }
+      );
+  
+      if (!updatedLeaveRequest) {
+        return res.status(404).json({ message: 'Leave request not found' });
+      }
+  
+      res.json(updatedLeaveRequest);
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+  });
 
-// Delete leave request
+//Delete Request
 router.delete('/:id', async (req, res) => {
-    const id = req.params.id;
-
     try {
-        const allEmployees = await Employee.find({}, 'leaveRequests');
-        const allLeaveRequests = allEmployees.flatMap(employee => employee.leaveRequests);
-        const leaveRequestIndex = allLeaveRequests.findIndex(request => request._id.toString() === id);
-
-        if (leaveRequestIndex === -1) {
-            return res.status(404).json({ message: 'Leave request not found' });
-        }
-
-        allLeaveRequests.splice(leaveRequestIndex, 1);
-
-        // Update the leave requests in the employee document
-        await Employee.updateOne({}, { $set: { leaveRequests: allLeaveRequests } });
-
-        res.json({ message: 'Leave request deleted successfully' });
+      const { id } = req.params;
+  
+      // Find and delete the leave request
+      const deletedLeaveRequest = await LeaveRequest.findByIdAndDelete(id);
+  
+      if (!deletedLeaveRequest) {
+        return res.status(404).json({ message: 'Leave request not found' });
+      }
+  
+      // Remove the leave request ID from the employee's leaveRequests array
+      await Employee.findByIdAndUpdate(deletedLeaveRequest.employeeId, {
+        $pull: { leaveRequests: id },
+      });
+  
+      res.json({ message: 'Leave request deleted successfully' });
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+  });
 
+//Approve/Reject Request
+router.patch('/:id/status', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status, approverId, approverComment } = req.body;
+  
+      // Validate required fields
+      if (!status || !approverId || !approverComment) {
+        return res.status(400).json({ message: 'Missing required fields' });
+      }
+  
+      // Find the leave request
+      const leaveRequest = await LeaveRequest.findById(id);
+      if (!leaveRequest) {
+        return res.status(404).json({ message: 'Leave request not found' });
+      }
+  
+      // Update the leave request status
+      leaveRequest.status = status;
+      leaveRequest.approverId = approverId;
+      leaveRequest.approverComment = approverComment;
+      leaveRequest.acceptedDate = new Date();
+  
+      // If approved, deduct from the employee's leave balance
+      if (status === 'Approved') {
+        const employee = await Employee.findById(leaveRequest.employeeId);
+        if (!employee) {
+          return res.status(404).json({ message: 'Employee not found' });
+        }
+  
+        // Deduct leave balance based on leave type
+        const leaveType = leaveRequest.leaveType.toLowerCase() + 'Leave';
+        if (employee.leaveBalance[leaveType] > 0) {
+          employee.leaveBalance[leaveType] -= 1;
+          await employee.save();
+        } else {
+          return res.status(400).json({ message: 'Insufficient leave balance' });
+        }
+      }
+  
+      // Save the updated leave request
+      await leaveRequest.save();
+  
+      // Generate a notification for the employee
+      const notification = new Notification({
+        userId: leaveRequest.employeeId,
+        message: `Your leave request has been ${status}.`,
+        isRead: false,
+        createdAt: new Date(),
+      });
+      await notification.save();
+  
+      res.json(leaveRequest);
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
 module.exports = router;
