@@ -1,0 +1,127 @@
+<div class="space-y-8 animate-fadeIn">
+  
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+        Good {{ getTimeOfDay() }}, {{ (currentUser$ | async)?.firstName }}
+      </h1>
+      <p class="text-slate-500 dark:text-slate-400 mt-2">
+        Here's what's happening in your organization today.
+      </p>
+    </div>
+    <div class="flex items-center gap-3 bg-white dark:bg-slate-800 px-4 py-2 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+      <div class="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 p-2 rounded-lg">
+        <i class="fa-regular fa-calendar-check"></i>
+      </div>
+      <div class="text-sm">
+        <p class="font-semibold text-slate-700 dark:text-slate-200">{{ currentDate | date:'EEEE' }}</p>
+        <p class="text-xs text-slate-500">{{ currentDate | date:'longDate' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div *ngFor="let stat of stats" 
+         class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all duration-300 group">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-sm font-medium text-slate-500 dark:text-slate-400">{{ stat.label }}</p>
+          <h3 class="text-3xl font-bold text-slate-800 dark:text-white mt-2">{{ stat.value }}</h3>
+        </div>
+        <div [class]="'h-12 w-12 rounded-xl flex items-center justify-center text-xl transition-transform group-hover:scale-110 ' + stat.color + ' bg-opacity-10 text-opacity-100'">
+          <i [class]="'fa-solid ' + stat.icon" ></i>
+        </div>
+      </div>
+      <div class="mt-4 flex items-center text-xs font-medium">
+        <span [class]="stat.trend.includes('+') ? 'text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded' : 'text-slate-500 bg-slate-50 dark:bg-slate-700 px-2 py-1 rounded'">
+          {{ stat.trend }}
+        </span>
+        <span class="ml-2 text-slate-400">vs last month</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <div class="lg:col-span-2 space-y-8">
+      
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-lg font-bold text-slate-800 dark:text-white">Attendance Analytics</h2>
+          <button class="text-sm text-blue-600 hover:text-blue-700 font-medium">View Report</button>
+        </div>
+        <div class="h-72 bg-slate-50 dark:bg-slate-700/50 rounded-xl border border-dashed border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center text-slate-400">
+          <i class="fa-solid fa-chart-area text-5xl mb-4 opacity-50"></i>
+          <p>Chart Component Integration Area</p>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+        <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-6">Recent Activity</h2>
+        <div class="relative pl-4 border-l border-slate-200 dark:border-slate-700 space-y-8">
+          <div *ngFor="let activity of recentActivities" class="relative group">
+            <div class="absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-white dark:border-slate-800 bg-blue-500 ring-4 ring-blue-50 dark:ring-blue-900/30"></div>
+            
+            <div class="flex items-start gap-4">
+              <div class="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-sm font-bold text-slate-600 dark:text-slate-300 flex-shrink-0">
+                {{ activity.avatar }}
+              </div>
+              <div>
+                <p class="text-sm text-slate-800 dark:text-white">
+                  <span class="font-semibold">{{ activity.user }}</span> 
+                  <span class="text-slate-600 dark:text-slate-400"> {{ activity.action }}</span>
+                </p>
+                <p class="text-xs text-slate-400 mt-1">{{ activity.time }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-8">
+      
+      <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/30">
+        <h2 class="text-lg font-bold mb-6">Quick Actions</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <button class="bg-white/10 hover:bg-white/20 backdrop-blur-sm p-4 rounded-xl flex flex-col items-center justify-center gap-3 transition-all border border-white/10 group">
+            <i class="fa-solid fa-user-plus text-2xl group-hover:scale-110 transition-transform"></i>
+            <span class="text-xs font-medium">Add Staff</span>
+          </button>
+          <button class="bg-white/10 hover:bg-white/20 backdrop-blur-sm p-4 rounded-xl flex flex-col items-center justify-center gap-3 transition-all border border-white/10 group">
+             <i class="fa-solid fa-file-contract text-2xl group-hover:scale-110 transition-transform"></i>
+             <span class="text-xs font-medium">New Leave</span>
+          </button>
+          <button class="bg-white/10 hover:bg-white/20 backdrop-blur-sm p-4 rounded-xl flex flex-col items-center justify-center gap-3 transition-all border border-white/10 group">
+             <i class="fa-solid fa-bullhorn text-2xl group-hover:scale-110 transition-transform"></i>
+             <span class="text-xs font-medium">Announce</span>
+          </button>
+          <button class="bg-white/10 hover:bg-white/20 backdrop-blur-sm p-4 rounded-xl flex flex-col items-center justify-center gap-3 transition-all border border-white/10 group">
+             <i class="fa-solid fa-clock text-2xl group-hover:scale-110 transition-transform"></i>
+             <span class="text-xs font-medium">Attendance</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-slate-800 dark:text-white">Pending Requests</h2>
+          <span class="bg-orange-100 text-orange-600 text-xs font-bold px-2 py-1 rounded-full">{{ pendingRequests.length }}</span>
+        </div>
+        <div class="space-y-3">
+          <div *ngFor="let req of pendingRequests" class="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl border border-slate-100 dark:border-slate-700 flex justify-between items-center group hover:border-blue-200 transition-colors">
+            <div>
+               <p class="text-xs font-bold text-blue-600 uppercase tracking-wide mb-1">{{ req.type }}</p>
+               <p class="text-sm font-semibold text-slate-800 dark:text-white">{{ req.user }}</p>
+               <p class="text-xs text-slate-500 truncate max-w-[150px]">{{ req.details }}</p>
+            </div>
+            <button class="text-slate-400 hover:text-blue-600 transition-colors">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

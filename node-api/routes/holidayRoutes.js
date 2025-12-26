@@ -1,83 +1,72 @@
+/**
+ * Holiday Routes
+ * Defines all holiday-related endpoints with proper MVC structure
+ * 
+ * @module routes/holidayRoutes
+ */
+
 const express = require('express');
 const router = express.Router();
-const { Types } = require('mongoose');
-const { ObjectId } = Types;
-const Holiday = require('../schemas/holiday');
+const holidayController = require('../controllers/holidayController');
+const authMiddleware = require('./auth.middleware');
 
-// getAll for holiday Object
-router.get('/', async (req, res) => {
-  try {
-    const holiday = await Holiday.find();
-    res.json(holiday);
-    console.log(holiday);
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+/**
+ * @route   POST /api/holidays
+ * @desc    Create a new holiday
+ * @access  Admin, HR
+ */
+router.post('/', authMiddleware, holidayController.createHoliday);
 
-//get By id
-router.get('/:id', async (req, res) => {
-  try {
-      const id = req.params.id;
+/**
+ * @route   POST /api/holidays/bulk
+ * @desc    Bulk create holidays for a year
+ * @access  Admin, HR
+ */
+router.post('/bulk', authMiddleware, holidayController.bulkCreateHolidays);
 
-      if (!ObjectId.isValid(id)) {
-          return res.status(400).json({ message: 'Invalid ID format' });
-      }
+/**
+ * @route   GET /api/holidays
+ * @desc    Get all holidays with filtering
+ * @access  All authenticated users
+ */
+router.get('/', authMiddleware, holidayController.getHolidays);
 
-      const holidayRequest = await Holiday.findOne({ _id: id });
-      if (!holidayRequest) {
-          return res.status(404).json({ message: 'Person not found' });
-      }
-      res.json(holidayRequest);
-  } catch (error) {
-      console.error('Error:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+/**
+ * @route   GET /api/holidays/calendar/:companyId/:year
+ * @desc    Get holiday calendar for a year
+ * @access  All authenticated users
+ */
+router.get('/calendar/:companyId/:year', authMiddleware, holidayController.getHolidayCalendar);
 
-// adding data of Holiday object
-router.post('/', async (req, res) => {
-  try {
-    const holidayData = req.body;
-  
-    // Generate a new ObjectId
-    const objectId = new ObjectId();
-  
-    // Add the generated ObjectId to the holidayData
-    holidayData._id = objectId;
-  
-    const newHoliday = new Holiday(holidayData);
-  
-    await newHoliday.save();
-    res.status(201).json(newHoliday);
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+/**
+ * @route   GET /api/holidays/upcoming/:companyId
+ * @desc    Get upcoming holidays
+ * @access  All authenticated users
+ */
+router.get('/upcoming/:companyId', authMiddleware, holidayController.getUpcomingHolidays);
 
-router.patch('/:id', async (req, res) => {
-    const id = req.params.id;
-    const updatedData = {
-    "id": String,
-    "name": String,
-    "date": Date,
-    "createdAt": Date,
-    };
-    try {
-        const updatedHoliday = await Holiday.findOneAndUpdate({ _id: id }, updatedData, {
-            new: false,
-        });
-        if (!updatedHoliday) {
-            return res.status(404).json({ message: 'Holiday not found' });
-        }
-        res.json(updatedHoliday);
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
+/**
+ * @route   GET /api/holidays/:id
+ * @desc    Get holiday by ID
+ * @access  All authenticated users
+ */
+router.get('/:id', authMiddleware, holidayController.getHolidayById);
+
+/**
+ * @route   PUT /api/holidays/:id
+ * @desc    Update holiday
+ * @access  Admin, HR
+ */
+router.put('/:id', authMiddleware, holidayController.updateHoliday);
+
+/**
+ * @route   DELETE /api/holidays/:id
+ * @desc    Delete holiday
+ * @access  Admin, HR
+ */
+router.delete('/:id', authMiddleware, holidayController.deleteHoliday);
+
+module.exports = router;
 
 //Delete 
 router.delete('/:id', async (req, res) => {

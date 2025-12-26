@@ -1,9 +1,79 @@
+/**
+ * Notification Routes
+ * Defines all notification-related endpoints with proper MVC structure
+ * 
+ * @module routes/notificationRoutes
+ */
 
 const express = require('express');
 const router = express.Router();
-const { Types } = require('mongoose');
-const { ObjectId } = Types;
-const Notification = require('../schemas/notification');
+const notificationController = require('../controllers/notificationController');
+const authMiddleware = require('./auth.middleware');
+
+/**
+ * @route   POST /api/notifications
+ * @desc    Create a new notification
+ * @access  Admin, HR, Manager
+ */
+router.post('/', authMiddleware, notificationController.createNotification);
+
+/**
+ * @route   POST /api/notifications/bulk
+ * @desc    Bulk create notifications for multiple users
+ * @access  Admin, HR, Manager
+ */
+router.post('/bulk', authMiddleware, notificationController.bulkCreateNotifications);
+
+/**
+ * @route   GET /api/notifications/stats
+ * @desc    Get notification statistics
+ * @access  All authenticated users
+ */
+router.get('/stats', authMiddleware, notificationController.getNotificationStats);
+
+/**
+ * @route   PUT /api/notifications/read-all
+ * @desc    Mark all notifications as read
+ * @access  All authenticated users
+ */
+router.put('/read-all', authMiddleware, notificationController.markAllAsRead);
+
+/**
+ * @route   DELETE /api/notifications/read
+ * @desc    Delete all read notifications
+ * @access  All authenticated users
+ */
+router.delete('/read', authMiddleware, notificationController.deleteAllRead);
+
+/**
+ * @route   GET /api/notifications
+ * @desc    Get all notifications for current user
+ * @access  All authenticated users
+ */
+router.get('/', authMiddleware, notificationController.getNotifications);
+
+/**
+ * @route   GET /api/notifications/:id
+ * @desc    Get notification by ID
+ * @access  All authenticated users (own notifications only)
+ */
+router.get('/:id', authMiddleware, notificationController.getNotificationById);
+
+/**
+ * @route   PUT /api/notifications/:id/read
+ * @desc    Mark notification as read
+ * @access  All authenticated users (own notifications only)
+ */
+router.put('/:id/read', authMiddleware, notificationController.markAsRead);
+
+/**
+ * @route   DELETE /api/notifications/:id
+ * @desc    Delete notification
+ * @access  All authenticated users (own notifications only)
+ */
+router.delete('/:id', authMiddleware, notificationController.deleteNotification);
+
+module.exports = router;
 
 // getAll for Notification Object
 router.get('/', async (req, res) => {

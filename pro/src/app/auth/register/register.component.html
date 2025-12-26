@@ -1,0 +1,483 @@
+<div class="register-container">
+  <div class="register-card">
+    <!-- Progress Bar -->
+    <div class="progress-section">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getStepProgress()"></div>
+      </div>
+      <div class="step-indicators">
+        <div class="step-indicator" 
+             *ngFor="let step of [1,2,3,4]" 
+             [class.active]="currentStep === step"
+             [class.completed]="currentStep > step">
+          <span class="step-number">{{ step }}</span>
+          <span class="step-label" *ngIf="step === 1">Company</span>
+          <span class="step-label" *ngIf="step === 2">Contact</span>
+          <span class="step-label" *ngIf="step === 3">Admin</span>
+          <span class="step-label" *ngIf="step === 4">Plan</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logo -->
+    <div class="logo-section">
+      <img src="assets/logo.svg" alt="Company Logo" class="logo" />
+      <h1 class="form-title">Register Your Company</h1>
+      <p class="form-subtitle">Step {{ currentStep }} of {{ totalSteps }}</p>
+    </div>
+
+    <!-- Registration Form -->
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+      
+      <!-- Step 1: Company Information -->
+      <div class="form-step" *ngIf="currentStep === 1">
+        <h2 class="step-title">Company Information</h2>
+        
+        <div class="form-group">
+          <label for="companyName" class="form-label">Company Name *</label>
+          <input
+            id="companyName"
+            type="text"
+            formControlName="companyName"
+            class="form-control"
+            [class.error]="hasError('companyName', 'required') || hasError('companyName', 'minlength')"
+            placeholder="Acme Corporation"
+          />
+          <div class="error-message" *ngIf="hasError('companyName', 'required')">
+            Company name is required
+          </div>
+          <div class="error-message" *ngIf="hasError('companyName', 'minlength')">
+            Company name must be at least 2 characters
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="companyType" class="form-label">Company Type *</label>
+            <select
+              id="companyType"
+              formControlName="companyType"
+              class="form-control"
+              [class.error]="hasError('companyType', 'required')"
+            >
+              <option value="">Select type</option>
+              <option *ngFor="let type of companyTypeOptions" [value]="type">{{ type }}</option>
+            </select>
+            <div class="error-message" *ngIf="hasError('companyType', 'required')">
+              Company type is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="industry" class="form-label">Industry *</label>
+            <select
+              id="industry"
+              formControlName="industry"
+              class="form-control"
+              [class.error]="hasError('industry', 'required')"
+            >
+              <option value="">Select industry</option>
+              <option *ngFor="let ind of industryOptions" [value]="ind">{{ ind }}</option>
+            </select>
+            <div class="error-message" *ngIf="hasError('industry', 'required')">
+              Industry is required
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="registrationNumber" class="form-label">Registration Number</label>
+            <input
+              id="registrationNumber"
+              type="text"
+              formControlName="registrationNumber"
+              class="form-control"
+              placeholder="REG123456"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="taxId" class="form-label">Tax ID</label>
+            <input
+              id="taxId"
+              type="text"
+              formControlName="taxId"
+              class="form-control"
+              placeholder="TAX123456"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="website" class="form-label">Website</label>
+          <input
+            id="website"
+            type="url"
+            formControlName="website"
+            class="form-control"
+            [class.error]="hasError('website', 'pattern')"
+            placeholder="https://www.company.com"
+          />
+          <div class="error-message" *ngIf="hasError('website', 'pattern')">
+            Please enter a valid URL
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Contact Information -->
+      <div class="form-step" *ngIf="currentStep === 2">
+        <h2 class="step-title">Contact Information</h2>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phone" class="form-label">Phone Number *</label>
+            <input
+              id="phone"
+              type="tel"
+              formControlName="phone"
+              class="form-control"
+              [class.error]="hasError('phone', 'required') || hasError('phone', 'pattern')"
+              placeholder="+1 (555) 123-4567"
+            />
+            <div class="error-message" *ngIf="hasError('phone', 'required')">
+              Phone number is required
+            </div>
+            <div class="error-message" *ngIf="hasError('phone', 'pattern')">
+              Please enter a valid phone number
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">Company Email *</label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              class="form-control"
+              [class.error]="hasError('email', 'required') || hasError('email', 'email')"
+              placeholder="contact@company.com"
+            />
+            <div class="error-message" *ngIf="hasError('email', 'required')">
+              Email is required
+            </div>
+            <div class="error-message" *ngIf="hasError('email', 'email')">
+              Please enter a valid email address
+            </div>
+          </div>
+        </div>
+
+        <div formGroupName="address">
+          <div class="form-group">
+            <label for="street" class="form-label">Street Address *</label>
+            <input
+              id="street"
+              type="text"
+              formControlName="street"
+              class="form-control"
+              [class.error]="hasError('address.street', 'required')"
+              placeholder="123 Main Street"
+            />
+            <div class="error-message" *ngIf="hasError('address.street', 'required')">
+              Street address is required
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="city" class="form-label">City *</label>
+              <input
+                id="city"
+                type="text"
+                formControlName="city"
+                class="form-control"
+                [class.error]="hasError('address.city', 'required')"
+                placeholder="San Francisco"
+              />
+              <div class="error-message" *ngIf="hasError('address.city', 'required')">
+                City is required
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="state" class="form-label">State *</label>
+              <input
+                id="state"
+                type="text"
+                formControlName="state"
+                class="form-control"
+                [class.error]="hasError('address.state', 'required')"
+                placeholder="CA"
+              />
+              <div class="error-message" *ngIf="hasError('address.state', 'required')">
+                State is required
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="postalCode" class="form-label">Postal Code *</label>
+              <input
+                id="postalCode"
+                type="text"
+                formControlName="postalCode"
+                class="form-control"
+                [class.error]="hasError('address.postalCode', 'required')"
+                placeholder="94102"
+              />
+              <div class="error-message" *ngIf="hasError('address.postalCode', 'required')">
+                Postal code is required
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="country" class="form-label">Country *</label>
+              <input
+                id="country"
+                type="text"
+                formControlName="country"
+                class="form-control"
+                [class.error]="hasError('address.country', 'required')"
+                placeholder="USA"
+              />
+              <div class="error-message" *ngIf="hasError('address.country', 'required')">
+                Country is required
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Admin User -->
+      <div class="form-step" *ngIf="currentStep === 3">
+        <h2 class="step-title">Administrator Account</h2>
+        <p class="step-description">This user will have full access to manage the system</p>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="adminFirstName" class="form-label">First Name *</label>
+            <input
+              id="adminFirstName"
+              type="text"
+              formControlName="adminFirstName"
+              class="form-control"
+              [class.error]="hasError('adminFirstName', 'required') || hasError('adminFirstName', 'minlength')"
+              placeholder="John"
+            />
+            <div class="error-message" *ngIf="hasError('adminFirstName', 'required')">
+              First name is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="adminLastName" class="form-label">Last Name *</label>
+            <input
+              id="adminLastName"
+              type="text"
+              formControlName="adminLastName"
+              class="form-control"
+              [class.error]="hasError('adminLastName', 'required') || hasError('adminLastName', 'minlength')"
+              placeholder="Doe"
+            />
+            <div class="error-message" *ngIf="hasError('adminLastName', 'required')">
+              Last name is required
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="adminEmail" class="form-label">Email Address *</label>
+            <input
+              id="adminEmail"
+              type="email"
+              formControlName="adminEmail"
+              class="form-control"
+              [class.error]="hasError('adminEmail', 'required') || hasError('adminEmail', 'email')"
+              placeholder="john@company.com"
+            />
+            <div class="error-message" *ngIf="hasError('adminEmail', 'required')">
+              Email is required
+            </div>
+            <div class="error-message" *ngIf="hasError('adminEmail', 'email')">
+              Please enter a valid email
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="adminPhone" class="form-label">Phone Number *</label>
+            <input
+              id="adminPhone"
+              type="tel"
+              formControlName="adminPhone"
+              class="form-control"
+              [class.error]="hasError('adminPhone', 'required') || hasError('adminPhone', 'pattern')"
+              placeholder="+1 (555) 123-4567"
+            />
+            <div class="error-message" *ngIf="hasError('adminPhone', 'required')">
+              Phone is required
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="adminPassword" class="form-label">Password *</label>
+          <div class="input-wrapper">
+            <input
+              id="adminPassword"
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="adminPassword"
+              class="form-control"
+              [class.error]="hasError('adminPassword', 'required') || hasError('adminPassword', 'minlength') || hasError('adminPassword', 'pattern')"
+              placeholder="Enter a strong password"
+            />
+            <button
+              type="button"
+              class="toggle-password"
+              (click)="togglePasswordVisibility('password')"
+              tabindex="-1"
+            >
+              <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+          </div>
+          <div class="password-requirements">
+            <small>Password must contain: uppercase, lowercase, number, and special character (min 8 chars)</small>
+          </div>
+          <div class="error-message" *ngIf="hasError('adminPassword', 'required')">
+            Password is required
+          </div>
+          <div class="error-message" *ngIf="hasError('adminPassword', 'pattern')">
+            Password doesn't meet requirements
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword" class="form-label">Confirm Password *</label>
+          <div class="input-wrapper">
+            <input
+              id="confirmPassword"
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              formControlName="confirmPassword"
+              class="form-control"
+              [class.error]="hasError('confirmPassword', 'required') || registerForm.hasError('passwordMismatch')"
+              placeholder="Re-enter your password"
+            />
+            <button
+              type="button"
+              class="toggle-password"
+              (click)="togglePasswordVisibility('confirm')"
+              tabindex="-1"
+            >
+              <svg *ngIf="!showConfirmPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg *ngIf="showConfirmPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+          </div>
+          <div class="error-message" *ngIf="registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched">
+            Passwords do not match
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: Subscription Plan -->
+      <div class="form-step" *ngIf="currentStep === 4">
+        <h2 class="step-title">Choose Your Plan</h2>
+        <p class="step-description">Select the subscription plan that fits your needs</p>
+        
+        <div class="subscription-plans">
+          <div
+            *ngFor="let plan of subscriptionPlans"
+            class="plan-card"
+            [class.selected]="registerForm.get('subscriptionPlan')?.value === plan.id"
+            (click)="registerForm.patchValue({ subscriptionPlan: plan.id })"
+          >
+            <div class="plan-header">
+              <h3 class="plan-name">{{ plan.name }}</h3>
+              <div class="plan-price">
+                <span class="currency">$</span>
+                <span class="amount">{{ plan.price }}</span>
+                <span class="period">/month</span>
+              </div>
+            </div>
+            <div class="plan-employees">Up to {{ plan.employees }} employees</div>
+            <ul class="plan-features">
+              <li *ngFor="let feature of plan.features">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                {{ feature }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="form-group terms-group">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              formControlName="agreeToTerms"
+              class="checkbox"
+            />
+            <span>I agree to the <a href="#" class="link">Terms of Service</a> and <a href="#" class="link">Privacy Policy</a></span>
+          </label>
+          <div class="error-message" *ngIf="hasError('agreeToTerms', 'required')">
+            You must agree to the terms to continue
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="prevStep()"
+          *ngIf="currentStep > 1"
+        >
+          Previous
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="nextStep()"
+          *ngIf="currentStep < totalSteps"
+        >
+          Next
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          *ngIf="currentStep === totalSteps"
+          [disabled]="registerForm.invalid"
+        >
+          Complete Registration
+        </button>
+      </div>
+
+      <!-- Login Link -->
+      <div class="login-link">
+        <span>Already have an account?</span>
+        <button
+          type="button"
+          class="link-button"
+          (click)="navigateToLogin()"
+        >
+          Sign in here
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

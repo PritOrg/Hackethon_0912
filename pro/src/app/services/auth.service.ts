@@ -44,6 +44,13 @@ export class AuthService {
     return !!this.currentUserValue && !!this.getToken();
   }
 
+  /**
+   * Refresh access token using refresh token
+   */
+  refreshToken(refreshToken: string): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/auth/refresh-token`, { refreshToken });
+  }
+
   login(email: string, password: string): Observable<User> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password })
       .pipe(

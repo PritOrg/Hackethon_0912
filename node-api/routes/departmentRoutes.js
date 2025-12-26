@@ -1,9 +1,62 @@
+/**
+ * Department Routes
+ * Defines all department-related endpoints with proper MVC structure
+ * 
+ * @module routes/departmentRoutes
+ */
+
 const express = require('express');
 const router = express.Router();
-const Department = require('../schemas/department');
-const Employee = require('../schemas/employee_v2');
+const departmentController = require('../controllers/departmentController');
 const authMiddleware = require('./auth.middleware');
 
+/**
+ * @route   POST /api/departments
+ * @desc    Create new department
+ * @access  Admin, HR
+ */
+router.post('/', authMiddleware, departmentController.createDepartment);
+
+/**
+ * @route   GET /api/departments/company/:companyId/hierarchy
+ * @desc    Get department hierarchy
+ * @access  All authenticated users
+ */
+router.get('/company/:companyId/hierarchy', authMiddleware, departmentController.getHierarchy);
+
+/**
+ * @route   GET /api/departments
+ * @desc    Get all departments
+ * @access  All authenticated users
+ */
+router.get('/', authMiddleware, departmentController.getDepartments);
+
+/**
+ * @route   GET /api/departments/:id
+ * @desc    Get department by ID
+ * @access  All authenticated users
+ */
+router.get('/:id', authMiddleware, departmentController.getDepartmentById);
+
+/**
+ * @route   PUT /api/departments/:id
+ * @desc    Update department
+ * @access  Admin, HR
+ */
+router.put('/:id', authMiddleware, departmentController.updateDepartment);
+
+/**
+ * @route   DELETE /api/departments/:id
+ * @desc    Delete department (soft delete)
+ * @access  Admin, HR
+ */
+router.delete('/:id', authMiddleware, departmentController.deleteDepartment);
+
+module.exports = router;
+
+// OLD CODE BELOW - REMOVED
+// ================================
+/*
 // Create new department
 router.post('/', authMiddleware, async (req, res) => {
   try {
@@ -224,4 +277,5 @@ router.get('/company/:companyId/hierarchy', async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = router; 
+*/

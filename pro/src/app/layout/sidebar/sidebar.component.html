@@ -1,0 +1,55 @@
+<div class="h-full flex flex-col justify-between text-slate-600 dark:text-slate-400">
+  
+  <div class="h-16 flex items-center flex-shrink-0" 
+       [ngClass]="{'justify-center': isCollapsed && !isMobile, 'px-6': !isCollapsed || isMobile}">
+    <div class="flex items-center gap-3 overflow-hidden whitespace-nowrap">
+      <div class="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center text-white flex-shrink-0 shadow-lg shadow-blue-500/30">
+        <i class="fa-solid fa-layer-group text-sm"></i>
+      </div>
+      <span *ngIf="!isCollapsed || isMobile" 
+            class="font-bold text-lg text-slate-800 dark:text-white tracking-tight animate-fadeIn">
+        EMS Pro
+      </span>
+    </div>
+  </div>
+
+  <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1 custom-scrollbar">
+    <ng-container *ngFor="let item of menuItems">
+      <a [routerLink]="item.route" 
+         routerLinkActive="bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
+         (click)="onLinkClick()"
+         class="group flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/50 relative">
+        
+        <div class="w-6 flex justify-center flex-shrink-0 transition-colors duration-200"
+             routerLinkActive="text-blue-600 dark:text-blue-400">
+          <i [class]="item.icon + ' text-lg'"></i>
+        </div>
+        
+        <span *ngIf="!isCollapsed || isMobile" 
+              class="ml-3 font-medium text-sm whitespace-nowrap animate-fadeIn">
+          {{ item.label }}
+        </span>
+
+        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-blue-600 rounded-r-full opacity-0 transition-opacity duration-200"
+             routerLinkActive="opacity-100"></div>
+
+        <div *ngIf="isCollapsed && !isMobile" 
+             class="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap shadow-lg z-50 transition-opacity delay-100">
+          {{ item.label }}
+          <div class="absolute top-1/2 -left-1 -translate-y-1/2 border-4 border-transparent border-r-slate-800"></div>
+        </div>
+      </a>
+    </ng-container>
+  </nav>
+
+  <div class="p-4 border-t border-slate-200 dark:border-slate-800">
+    <button *ngIf="isMobile" (click)="onLinkClick()" class="flex items-center w-full px-3 py-2 text-sm font-medium text-red-500 hover:bg-red-50 rounded-lg">
+      <i class="fa-solid fa-sign-out-alt w-6 text-center"></i>
+      <span class="ml-3">Sign Out</span>
+    </button>
+    
+    <div *ngIf="!isMobile" class="flex justify-center">
+       <div class="h-1 w-8 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
+    </div>
+  </div>
+</div>

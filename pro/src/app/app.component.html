@@ -1,1 +1,25 @@
+<!-- Toast Notifications Container -->
+<div class="toast-container">
+  <div *ngFor="let notification of notificationService.notifications$ | async" 
+       class="toast-notification"
+       [class.toast-success]="notification.type === 'success'"
+       [class.toast-error]="notification.type === 'error'"
+       [class.toast-warning]="notification.type === 'warning'"
+       [class.toast-info]="notification.type === 'info'">
+    <div class="toast-icon">
+      <i *ngIf="notification.type === 'success'" class="bi bi-check-circle-fill"></i>
+      <i *ngIf="notification.type === 'error'" class="bi bi-x-circle-fill"></i>
+      <i *ngIf="notification.type === 'warning'" class="bi bi-exclamation-triangle-fill"></i>
+      <i *ngIf="notification.type === 'info'" class="bi bi-info-circle-fill"></i>
+    </div>
+    <div class="toast-content">
+      <div class="toast-title">{{ getToastTitle(notification.type) }}</div>
+      <div class="toast-message">{{ notification.message }}</div>
+    </div>
+    <button type="button" class="toast-close" aria-label="Close" (click)="removeNotification(notification)">
+      <i class="bi bi-x"></i>
+    </button>
+  </div>
+</div>
+
 <router-outlet></router-outlet>

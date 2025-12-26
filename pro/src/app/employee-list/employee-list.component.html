@@ -1,206 +1,118 @@
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-10 px-4 sm:px-6 lg:px-8">
-    <!-- Header -->
-    <div class="mb-10 sm:flex sm:items-center sm:justify-between">
-      <div class="max-w-2xl">
-        <h1 class="text-4xl font-bold text-gray-900 tracking-tight">Employees</h1>
-        <p class="mt-3 text-lg text-gray-600">Manage your company's workforce and team members</p>
-      </div>
-      <div class="mt-6 sm:mt-0">
-        <button (click)="addEmployee()"
-          class="inline-flex items-center px-6 py-3 border border-transparent rounded-xl shadow-lg text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 transform transition-all duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-          <svg class="-ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-          Add Employee
+<div class="min-h-screen space-y-6 animate-fadeIn">
+  
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Employees</h1>
+      <p class="text-slate-500 dark:text-slate-400 mt-1">Manage access and update employee records.</p>
+    </div>
+    
+    <div class="flex items-center gap-2">
+      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-1 flex">
+        <button (click)="viewMode = 'list'" [class.bg-slate-100]="viewMode === 'list'" class="p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors">
+          <i class="fa-solid fa-list"></i>
+        </button>
+        <button (click)="viewMode = 'grid'" [class.bg-slate-100]="viewMode === 'grid'" class="p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors">
+          <i class="fa-solid fa-grid-2"></i>
         </button>
       </div>
-    </div>
-  
-    <!-- Search and Filters -->
-    <div class="mb-8">
-      <div class="max-w-xl">
-        <div class="relative rounded-xl shadow-lg">
-          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <svg class="h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-          <input [formControl]="searchControl" type="text"
-            class="block w-full pl-12 pr-4 py-3 border-0 text-base text-gray-900 placeholder-gray-500 rounded-xl focus:ring-2 focus:ring-indigo-500 transition-shadow duration-200"
-            placeholder="Search employees by name, role, or department...">
-        </div>
-      </div>
-    </div>
-  
-    <!-- Employee Grid -->
-    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      <div *ngFor="let employee of paginatedEmployees"
-        class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
-        <!-- Employee Card Header -->
-        <div class="px-6 pt-6 pb-4">
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center space-x-4">
-              <img [src]="'https://ui-avatars.com/api/?name=' + employee.firstName + '+' + employee.lastName"
-                class="h-16 w-16 rounded-xl object-cover ring-4 ring-indigo-50"
-                [alt]="employee.firstName + ' ' + employee.lastName">
-              <div>
-                <h3 class="text-xl font-bold text-gray-900 leading-tight">
-                  {{employee.firstName}} {{employee.lastName}}
-                </h3>
-                <p class="text-indigo-600 font-medium">{{employee.position}}</p>
-              </div>
-            </div>
-            <div class="flex space-x-2">
-              <button (click)="editEmployee(employee._id)"
-                class="p-2 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                <svg class="h-5 w-5 text-gray-400 hover:text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none"
-                  viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-              </button>
-              <button (click)="deleteEmployee(employee._id)"
-                class="p-2 rounded-lg hover:bg-red-50 transition-colors duration-200">
-                <svg class="h-5 w-5 text-gray-400 hover:text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none"
-                  viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-  
-        <!-- Employee Card Content -->
-        <div class="px-6 py-6 bg-gray-50 space-y-4">
-          <div class="flex items-center space-x-3">
-            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            <span class="text-sm text-gray-600">{{employee.email}}</span>
-          </div>
-          <div class="flex items-center space-x-3">
-            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            </svg>
-            <span class="text-sm text-gray-600">{{employee.department}}</span>
-          </div>
-          <div class="flex items-center space-x-3">
-            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            <span class="text-sm text-gray-600">{{employee.role}}</span>
-          </div>
-          <div class="pt-2">
-            <span [class]="'inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium ' + 
-              (employee.jobShift === 'Morning' ? 'bg-green-100 text-green-800' :
-               employee.jobShift === 'Evening' ? 'bg-orange-100 text-orange-800' :
-               'bg-blue-100 text-blue-800')">
-              <svg class="mr-1.5 h-2 w-2" [class]="employee.jobShift === 'Morning' ? 'text-green-400' :
-                employee.jobShift === 'Evening' ? 'text-orange-400' : 'text-blue-400'" fill="currentColor"
-                viewBox="0 0 8 8">
-                <circle cx="4" cy="4" r="3" />
-              </svg>
-              {{employee.jobShift}} Shift
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-      
-    <!-- Loading State -->
-    <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-        <p class="mt-4 text-sm text-gray-500">Loading employees...</p>
-      </div>
-  
-    <!-- Pagination -->
-    <div *ngIf="!isLoading && filteredEmployees.length > 0" 
-         class="mt-6 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-      <div class="flex flex-1 justify-between sm:hidden">
-        <button
-          [disabled]="currentPage === 1"
-          (click)="currentPage = currentPage - 1"
-          class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
-          Previous
-        </button>
-        <button
-          [disabled]="currentPage === totalPages"
-          (click)="currentPage = currentPage + 1"
-          class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
-          Next
-        </button>
-      </div>
-      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-        <div>
-          <p class="text-sm text-gray-700">
-            Showing
-            <span class="font-medium">{{ (currentPage - 1) * itemsPerPage + 1 }}</span>
-            to
-            <span class="font-medium">
-              {{ getMinValue(currentPage * itemsPerPage, filteredEmployees.length) }}
-            </span>
-            of
-            <span class="font-medium">{{ filteredEmployees.length }}</span>
-            results
-          </p>
-        </div>
-        <div>
-          <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-            <button
-              [disabled]="currentPage === 1"
-              (click)="currentPage = currentPage - 1"
-              class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            >
-              <span class="sr-only">Previous</span>
-              <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
-              </svg>
-            </button>
-            <button
-              [disabled]="currentPage === totalPages"
-              (click)="currentPage = currentPage + 1"
-              class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            >
-              <span class="sr-only">Next</span>
-              <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </nav>
-        </div>
-      </div>
-    </div>
-  
-    <!-- Empty State -->
-    <div *ngIf="!isLoading && filteredEmployees.length === 0" 
-         class="text-center py-12">
-      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-      </svg>
-      <h3 class="mt-2 text-sm font-medium text-gray-900">No employees found</h3>
-      <p class="mt-1 text-sm text-gray-500">Get started by adding a new employee.</p>
-      <div class="mt-6">
-        <button
-          (click)="addEmployee()"
-          class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-          Add Employee
-        </button>
-      </div>
+
+      <button (click)="addEmployee()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all shadow-md shadow-blue-500/20 flex items-center gap-2">
+        <i class="fa-solid fa-plus"></i> Add Employee
+      </button>
     </div>
   </div>
+
+  <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row gap-4">
+    <div class="relative flex-1">
+      <i class="fa-solid fa-search absolute left-3 top-3 text-slate-400"></i>
+      <input [formControl]="searchControl" type="text" placeholder="Search by name, role or ID..." 
+             class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
+    </div>
+    <div class="flex gap-3">
+      <select class="px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-600 dark:text-slate-300 focus:border-blue-500 outline-none cursor-pointer">
+        <option value="all">All Departments</option>
+        <option value="IT">IT & Engineering</option>
+        <option value="HR">Human Resources</option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="viewMode === 'list'" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead class="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 text-xs uppercase font-semibold">
+          <tr>
+            <th class="px-6 py-4">Employee</th>
+            <th class="px-6 py-4">Role & Dept</th>
+            <th class="px-6 py-4">Status</th>
+            <th class="px-6 py-4">Joined</th>
+            <th class="px-6 py-4 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+          <tr *ngFor="let emp of paginatedEmployees" class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <img [src]="'https://ui-avatars.com/api/?name=' + emp.firstName + '+' + emp.lastName + '&background=random'" class="h-10 w-10 rounded-full">
+                <div>
+                  <div class="font-medium text-slate-900 dark:text-white">{{ emp.firstName }} {{ emp.lastName }}</div>
+                  <div class="text-xs text-slate-500">{{ emp.email }}</div>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="text-sm text-slate-900 dark:text-white">{{ emp.designation }}</div>
+              <div class="text-xs text-slate-500">{{ emp.department }}</div>
+            </td>
+            <td class="px-6 py-4">
+              <span class="px-2.5 py-1 rounded-full text-xs font-medium"
+                [ngClass]="{
+                  'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400': emp.status === 'Active',
+                  'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-400': emp.status !== 'Active'
+                }">
+                <span class="w-1.5 h-1.5 rounded-full inline-block mr-1.5" 
+                      [ngClass]="emp.status === 'Active' ? 'bg-green-500' : 'bg-slate-500'"></span>
+                {{ emp.status || 'Active' }}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+              {{ emp.joiningDate | date:'mediumDate' }}
+            </td>
+            <td class="px-6 py-4 text-right">
+              <button (click)="editEmployee(emp._id)" class="text-slate-400 hover:text-blue-600 mx-2 transition-colors"><i class="fa-solid fa-pen"></i></button>
+              <button (click)="deleteEmployee(emp._id)" class="text-slate-400 hover:text-red-600 transition-colors"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div *ngFor="let emp of paginatedEmployees" class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 flex flex-col items-center text-center hover:shadow-lg transition-all duration-300 group relative">
+        <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button (click)="editEmployee(emp._id)" class="text-slate-400 hover:text-blue-600"><i class="fa-solid fa-pen-to-square"></i></button>
+        </div>
+
+        <img [src]="'https://ui-avatars.com/api/?name=' + emp.firstName + '+' + emp.lastName + '&background=random'" class="h-20 w-20 rounded-full mb-4 shadow-md">
+        
+        <h3 class="font-bold text-slate-900 dark:text-white text-lg">{{ emp.firstName }} {{ emp.lastName }}</h3>
+        <p class="text-sm text-blue-600 dark:text-blue-400 font-medium mb-1">{{ emp.designation }}</p>
+        <p class="text-xs text-slate-500 mb-4">{{ emp.department }}</p>
+
+        <div class="w-full pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center text-xs text-slate-500">
+            <span><i class="fa-solid fa-envelope mr-1"></i> Email</span>
+            <span class="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">{{ emp.employmentType || 'Full-Time' }}</span>
+        </div>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between pt-4">
+    <span class="text-sm text-slate-500">Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ getMinValue(currentPage * itemsPerPage, filteredEmployees.length) }} of {{ filteredEmployees.length }}</span>
+    <div class="flex gap-2">
+       <button [disabled]="currentPage === 1" (click)="currentPage = currentPage - 1" class="px-3 py-1 border rounded hover:bg-slate-50 disabled:opacity-50">Prev</button>
+       <button [disabled]="currentPage === totalPages" (click)="currentPage = currentPage + 1" class="px-3 py-1 border rounded hover:bg-slate-50 disabled:opacity-50">Next</button>
+    </div>
+  </div>
+
+</div>

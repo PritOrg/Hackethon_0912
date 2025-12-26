@@ -40,7 +40,9 @@ mongoose.connect(config.database.uri).then(() => {
   // Apply rate limiting to all API routes
   app.use('/api/', apiLimiter);
   
+  const authRoutes = require('./routes/authRoutes');
   const companyRoutes = require('./routes/companyRoutes');
+  const companySettingsRoutes = require('./routes/companySettingsRoutes');
   const employeeRoutes = require('./routes/employeeRoutes');
   const leaveRequestRoutes = require('./routes/leaveRequestsRoutes');
   const holidayRoutes = require('./routes/holidayRoutes');
@@ -49,6 +51,9 @@ mongoose.connect(config.database.uri).then(() => {
   const departmentRoutes = require('./routes/departmentRoutes');
   const assetRoutes = require('./routes/assetRoutes');
   const performanceReviewRoutes = require('./routes/performanceReviewRoutes');
+  const projectRoutes = require('./routes/projectRoutes');
+  const shiftRoutes = require('./routes/shiftRoutes');
+  const dashboardRoutes = require('./routes/dashboardRoutes');
   
   // API Documentation
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
@@ -64,8 +69,10 @@ mongoose.connect(config.database.uri).then(() => {
   });
   
   // API Routes
+  app.use('/api/auth', authRoutes);
   app.use('/api/leave-requests', leaveRequestRoutes);
   app.use('/api/company', companyRoutes);
+  app.use('/api/company', companySettingsRoutes);
   app.use('/api/holiday', holidayRoutes);
   app.use('/api/notification', notificationRoutes);
   app.use('/api/employee', employeeRoutes);
@@ -73,6 +80,9 @@ mongoose.connect(config.database.uri).then(() => {
   app.use('/api/department', departmentRoutes);
   app.use('/api/asset', assetRoutes);
   app.use('/api/performance-review', performanceReviewRoutes);
+  app.use('/api/projects', projectRoutes);
+  app.use('/api/shifts', shiftRoutes);
+  app.use('/api/dashboard', dashboardRoutes);
   
   // 404 Handler - must be after all routes
   app.use(notFoundHandler);

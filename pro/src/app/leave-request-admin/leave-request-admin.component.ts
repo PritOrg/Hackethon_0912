@@ -1,23 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-
-interface LeaveRequest {
-  _id: string;
-  employeeId: string;
-  employeeName: string;
-  employeeAvatar: string;
-  employeeDepartment: string;
-  startDate: Date;
-  endDate: Date;
-  status: 'Pending' | 'Approved' | 'Rejected';
-  reason: string;
-  leaveType: 'Half Day' | 'Full Day' | 'Sick Leave' | 'Casual Leave' | 'Maternity Leave' | 'Annual Leave' | 'Privilege Leave';
-  approverId?: string;
-  approverComment?: string;
-  acceptedDate?: Date;
-  createdAt: Date;
-}
+import { LeaveApiService } from '../services/leave-api.service';
+import { LeaveRequest } from '../core/models/leave.model';
 
 @Component({
   selector: 'app-leave-request-admin',
@@ -54,7 +39,7 @@ export class LeaveRequestAdminComponent implements OnInit {
   statusOptions = ['All', 'Pending', 'Approved', 'Rejected'];
   dateRangeOptions = ['All', 'Today', 'This Week', 'This Month', 'Last Month'];
 
-  constructor() {}
+  constructor(private leaveService: LeaveApiService) {}
 
   ngOnInit(): void {
     this.loadLeaveRequests();
@@ -71,72 +56,21 @@ export class LeaveRequestAdminComponent implements OnInit {
   }
 
   loadLeaveRequests() {
-    // Simulate API call with dummy data
-    setTimeout(() => {
-      this.leaveRequests = this.generateDummyData();
-      this.applyFilters();
-      this.isLoading = false;
-    }, 1000);
-  }
-
-  generateDummyData(): LeaveRequest[] {
-    const departments = ['Engineering', 'Marketing', 'HR', 'Sales', 'Finance', 'Product'];
-    const names = [
-      'John Smith', 'Mary Johnson', 'Robert Williams', 'Patricia Brown', 'Michael Jones',
-      'Linda Davis', 'James Miller', 'Elizabeth Wilson', 'David Moore', 'Jennifer Taylor',
-      'Richard Anderson', 'Susan Thomas', 'Joseph Jackson', 'Margaret White', 'Charles Harris'
-    ];
-    
-    const leaveTypes: Array<LeaveRequest['leaveType']> = [
-      'Half Day', 'Full Day', 'Sick Leave', 'Casual Leave', 'Maternity Leave', 'Annual Leave', 'Privilege Leave'
-    ];
-    
-    const statuses: Array<LeaveRequest['status']> = ['Pending', 'Approved', 'Rejected'];
-    
-    const reasons = [
-      'Personal emergency', 'Medical appointment', 'Family event', 'Doctor\'s appointment', 
-      'Family vacation', 'Home repairs', 'Child\'s school event', 'Feeling unwell',
-      'Dentist appointment', 'Moving houses', 'Wedding preparations', 'Court appearance'
-    ];
-
-    return Array(30).fill(null).map((_, index) => {
-      const startDate = new Date();
-      startDate.setDate(startDate.getDate() + Math.floor(Math.random() * 30) - 15);
-      
-      const endDate = new Date(startDate);
-      endDate.setDate(startDate.getDate() + Math.floor(Math.random() * 5));
-      
-      const createdAt = new Date(startDate);
-      createdAt.setDate(startDate.getDate() - Math.floor(Math.random() * 10) - 1);
-      
-      const status = statuses[Math.floor(Math.random() * statuses.length)];
-      const acceptedDate = status !== 'Pending' ? new Date() : undefined;
-      const approverComment = status !== 'Pending' ? 
-        status === 'Approved' ? 'Approved as requested' : 'Request conflicts with department schedule' : 
-        undefined;
-
-      const employeeName = names[Math.floor(Math.random() * names.length)];
-      const firstName = employeeName.split(' ')[0];
-      const lastName = employeeName.split(' ')[1];
-      
-      return {
-        _id: `req${index + 1000}`,
-        employeeId: `emp${index + 100}`,
-        employeeName: employeeName,
-        employeeAvatar: `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=random`,
-        employeeDepartment: departments[Math.floor(Math.random() * departments.length)],
-        startDate,
-        endDate,
-        status,
-        reason: reasons[Math.floor(Math.random() * reasons.length)],
-        leaveType: leaveTypes[Math.floor(Math.random() * leaveTypes.length)],
-        approverId: status !== 'Pending' ? 'admin123' : undefined,
-        approverComment,
-        acceptedDate,
-        createdAt
-      };
+    this.isLoading = true;
+    this.leaveService.getAllLeaveRequests().subscribe({
+      next: (response) => {
+        this.leaveRequests = response.data;
+        this.applyFilters();
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load leave requests', err);
+        this.isLoading = false;
+      }
     });
   }
+
+
 
   applyFilters() {
     let filtered = [...this.leaveRequests];
@@ -144,8 +78,8 @@ export class LeaveRequestAdminComponent implements OnInit {
     const searchTerm = this.searchControl.value?.toLowerCase() || '';
     if (searchTerm) {
       filtered = filtered.filter(request => 
-        request.employeeName.toLowerCase().includes(searchTerm) ||
-        request.employeeDepartment.toLowerCase().includes(searchTerm) ||
+        this.getEmployeeName(request).toLowerCase().includes(searchTerm) ||
+        this.getEmployeeDepartment(request).toLowerCase().includes(searchTerm) ||
         request.reason.toLowerCase().includes(searchTerm) ||
         request._id.toLowerCase().includes(searchTerm)
       );
@@ -210,13 +144,57 @@ export class LeaveRequestAdminComponent implements OnInit {
     this.currentPage = 1;
   }
 
-  openModal(request: LeaveRequest) {
+  getEmployeeName(request: LeaveRequest): string {
+    if (typeof request.employeeId === 'object' && request.employeeId !== null) {
+      return `${request.employeeId.firstName} ${request.employeeId.lastName}`;
+    }
+    return 'Unknown Employee';
+  }
+
+  getEmployeeDepartment(request: LeaveRequest): string {
+    if (typeof request.employeeId === 'object' && request.employeeId !== null) {
+      return request.employeeId.department || 'N/A';
+    }
+    return 'N/A';
+  }
+
+  getEmployeeAvatar(request: LeaveRequest): string {
+    const name = this.getEmployeeName(request);
+    return `https://ui-avatars.com/api/?name=${name.replace(' ', '+')}&background=random`;
+  }
+
+  getEmployeeIdString(request: LeaveRequest): string {
+    if (typeof request.employeeId === 'object' && request.employeeId !== null) {
+      return request.employeeId.empCode || request.employeeId._id;
+    }
+    return request.employeeId as string;
+  }
+
+  getLatestComment(request: LeaveRequest): string {
+    if (request.workflow && request.workflow.length > 0) {
+      const lastEntry = request.workflow[request.workflow.length - 1];
+      return lastEntry.comment || '';
+    }
+    return '';
+  }
+
+  getAcceptedDate(request: LeaveRequest): Date | undefined {
+    if (request.workflow && request.workflow.length > 0) {
+       const lastEntry = request.workflow[request.workflow.length - 1];
+       if (lastEntry.status !== 'Pending') {
+         return lastEntry.actionDate;
+       }
+    }
+    return undefined;
+  }
+
+  openDrawer(request: LeaveRequest) {
     this.selectedRequest = request;
-    this.approverComment.setValue(request.approverComment || '');
+    this.approverComment.setValue(this.getLatestComment(request));
     this.isModalOpen = true;
   }
 
-  closeModal() {
+  closeDrawer() {
     this.isModalOpen = false;
     this.selectedRequest = null;
     this.approverComment.setValue('');
@@ -224,25 +202,23 @@ export class LeaveRequestAdminComponent implements OnInit {
 
   updateRequestStatus(status: 'Approved' | 'Rejected') {
     if (this.selectedRequest) {
-      // In a real app, you would make an API call here
-      const index = this.leaveRequests.findIndex(r => r._id === this.selectedRequest!._id);
-      if (index !== -1) {
-        this.leaveRequests[index] = {
-          ...this.leaveRequests[index],
-          status,
-          approverComment: this.approverComment.value || '',
-          approverId: 'admin123', // In a real app, this would be the actual admin's ID
-          acceptedDate: new Date()
-        };
-        
-        // Update filtered list too
-        this.applyFilters();
-        
-        // Show toast notification (you would implement this using a proper notification service)
-        console.log(`Leave request ${status.toLowerCase()} successfully`);
-        
-        this.closeModal();
-      }
+      const updateData = {
+        status,
+        approverComment: this.approverComment.value || ''
+      };
+
+      this.leaveService.updateLeaveRequest(this.selectedRequest._id, updateData).subscribe({
+        next: (response) => {
+          // Update local state
+          const index = this.leaveRequests.findIndex(r => r._id === this.selectedRequest!._id);
+          if (index !== -1 && response.data) {
+            this.leaveRequests[index] = response.data;
+            this.applyFilters();
+          }
+          this.closeDrawer();
+        },
+        error: (err) => console.error('Failed to update request status', err)
+      });
     }
   }
 

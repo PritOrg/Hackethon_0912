@@ -1,2 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
-@import "tailwindcss";
+
+/* FontAwesome Icons */
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
+/* Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

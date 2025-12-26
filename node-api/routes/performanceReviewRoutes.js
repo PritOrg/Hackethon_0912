@@ -1,8 +1,100 @@
+/**
+ * Performance Review Routes
+ * Defines all performance review endpoints with proper MVC structure
+ * 
+ * @module routes/performanceReviewRoutes
+ */
+
 const express = require('express');
 const router = express.Router();
-const PerformanceReview = require('../schemas/performanceReview');
-const Employee = require('../schemas/employee_v2');
+const performanceReviewController = require('../controllers/performanceReviewController');
 const authMiddleware = require('./auth.middleware');
+const Employee = require('../schemas/employee');
+const PerformanceReview = require('../schemas/performanceReview');
+
+/**
+ * @route   POST /api/reviews
+ * @desc    Initiate a new performance review
+ * @access  Admin, HR
+ */
+router.post('/', authMiddleware, performanceReviewController.initiateReview);
+
+/**
+ * @route   GET /api/reviews/me
+ * @desc    Get my reviews (as employee)
+ * @access  All authenticated users
+ */
+router.get('/me', authMiddleware, performanceReviewController.getMyReviews);
+
+/**
+ * @route   GET /api/reviews/team
+ * @desc    Get team reviews (as manager)
+ * @access  Manager
+ */
+router.get('/team', authMiddleware, performanceReviewController.getTeamReviews);
+
+/**
+ * @route   GET /api/reviews/stats/:companyId
+ * @desc    Get review statistics
+ * @access  Admin, HR
+ */
+router.get('/stats/:companyId', authMiddleware, performanceReviewController.getReviewStats);
+
+/**
+ * @route   GET /api/reviews/:id/report
+ * @desc    Get review report
+ * @access  Admin, HR, Manager
+ */
+router.get('/:id/report', authMiddleware, performanceReviewController.getReviewReport);
+
+/**
+ * @route   GET /api/reviews/:id
+ * @desc    Get review by ID
+ * @access  Admin, HR, Manager, Employee (own reviews)
+ */
+router.get('/:id', authMiddleware, performanceReviewController.getReviewById);
+
+/**
+ * @route   GET /api/reviews
+ * @desc    Get all reviews with filtering
+ * @access  Admin, HR, Manager
+ */
+router.get('/', authMiddleware, performanceReviewController.getReviews);
+
+/**
+ * @route   PUT /api/reviews/:id/self
+ * @desc    Submit self-assessment
+ * @access  Employee
+ */
+router.put('/:id/self', authMiddleware, performanceReviewController.submitSelfAssessment);
+
+/**
+ * @route   PUT /api/reviews/:id/manager
+ * @desc    Submit manager assessment
+ * @access  Manager
+ */
+router.put('/:id/manager', authMiddleware, performanceReviewController.submitManagerAssessment);
+
+/**
+ * @route   POST /api/reviews/:id/peer-feedback
+ * @desc    Add peer feedback
+ * @access  All authenticated users
+ */
+router.post('/:id/peer-feedback', authMiddleware, performanceReviewController.addPeerFeedback);
+
+/**
+ * @route   PUT /api/reviews/:id/acknowledge
+ * @desc    Acknowledge review (employee sign-off)
+ * @access  Employee
+ */
+router.put('/:id/acknowledge', authMiddleware, performanceReviewController.acknowledgeReview);
+
+/**
+ * @route   PUT /api/reviews/:id/status
+ * @desc    Update review status
+ * @access  Admin, HR
+ */
+router.put('/:id/status', authMiddleware, performanceReviewController.updateReviewStatus);
 
 // Create new performance review
 router.post('/', authMiddleware, async (req, res) => {

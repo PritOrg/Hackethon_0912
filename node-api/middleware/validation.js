@@ -37,26 +37,52 @@ const schemas = {
   // Employee validation
   createEmployee: Joi.object({
     companyId: Joi.string().required(),
-    username: Joi.string().min(3).max(30).required(),
+    empCode: Joi.string().required(),
+    username: Joi.string().min(3).max(30).allow('', null),
     email: Joi.string().email().required(),
     password: Joi.string().min(8).required(),
     firstName: Joi.string().required(),
     middleName: Joi.string().allow('', null),
     lastName: Joi.string().required(),
-    birthdate: Joi.date().required(),
-    role: Joi.string().required(),
+    birthdate: Joi.date().allow(null),
+    role: Joi.string().valid('Admin', 'HR', 'Manager', 'Employee').default('Employee'),
+    designation: Joi.string().required(),
     joiningDate: Joi.date().required(),
     expertise: Joi.array().items(Joi.string()),
     projects: Joi.array().items(Joi.string()),
     profilePic: Joi.string().allow('', null),
     achievements: Joi.array().items(Joi.string()),
-    jobShift: Joi.string().required(),
-    phoneNumber: Joi.string().required(),
-    address: Joi.string().required(),
-    emergencyContact: Joi.string().required(),
-    department: Joi.string().required(),
-    position: Joi.string().required(),
-    salary: Joi.number().positive().required(),
+    jobShift: Joi.string().valid('Morning', 'Evening', 'Night', 'Flexible'),
+    phoneNumber: Joi.string().allow('', null),
+    address: Joi.object({
+      street: Joi.string().allow('', null),
+      city: Joi.string().allow('', null),
+      state: Joi.string().allow('', null),
+      zipCode: Joi.string().allow('', null),
+      country: Joi.string().allow('', null)
+    }),
+    emergencyContact: Joi.object({
+      name: Joi.string().allow('', null),
+      relationship: Joi.string().allow('', null),
+      phoneNumber: Joi.string().allow('', null),
+      email: Joi.string().email().allow('', null)
+    }),
+    department: Joi.string().allow('', null),
+    position: Joi.string().allow('', null),
+    status: Joi.string().valid('Active', 'Probation', 'Notice Period', 'Terminated', 'Resigned', 'On Leave').default('Active'),
+    employmentType: Joi.string().valid('Full-Time', 'Part-Time', 'Contract', 'Intern').default('Full-Time'),
+    salary: Joi.object({
+      amount: Joi.number().positive().required(),
+      currency: Joi.string().default('USD'),
+      structure: Joi.string().valid('Hourly', 'Fixed', 'Contract').default('Fixed'),
+      breakdown: Joi.object({
+        basic: Joi.number().allow(null),
+        hra: Joi.number().allow(null),
+        allowances: Joi.number().allow(null),
+        bonus: Joi.number().allow(null),
+        deductions: Joi.number().allow(null)
+      })
+    }).required()
   }),
 
   updateEmployee: Joi.object({
@@ -112,6 +138,33 @@ const schemas = {
     phoneNumber: Joi.string().required(),
     industry: Joi.string(),
     website: Joi.string().uri().allow('', null),
+  }),
+
+  // Company registration validation (SaaS)
+  registerCompany: Joi.object({
+    companyName: Joi.string().required(),
+    companyType: Joi.string().required(),
+    industry: Joi.string().required(),
+    registrationNumber: Joi.string().allow('', null),
+    taxId: Joi.string().allow('', null),
+    website: Joi.string().uri().allow('', null),
+    phone: Joi.string().required(),
+    email: Joi.string().email().required(),
+    address: Joi.object({
+      street: Joi.string().required(),
+      city: Joi.string().required(),
+      state: Joi.string().required(),
+      zipCode: Joi.string().required(),
+      country: Joi.string().required(),
+    }).required(),
+    adminUser: Joi.object({
+      firstName: Joi.string().required(),
+      lastName: Joi.string().required(),
+      email: Joi.string().email().required(),
+      phone: Joi.string().required(),
+      password: Joi.string().min(8).required(),
+    }).required(),
+    subscriptionPlan: Joi.string().valid('basic', 'professional', 'enterprise').required(),
   }),
 
   // Attendance validation

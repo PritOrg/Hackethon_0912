@@ -1,94 +1,77 @@
-const router = require('express').Router();
-const Attendance = require('../schemas/attendance_v2');
-const Employee = require('../schemas/employee_v2');
 
-router.post('/clock-in', async (req, res) => {
-    try {
-      const { employeeId, companyId } = req.body;
-  
-      // Validate required fields
-      if (!employeeId || !companyId) {
-        return res.status(400).json({ message: 'Employee ID and Company ID are required' });
-      }
-  
-      // Check if the employee has already clocked in today
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); // Set time to the start of the day
-  
-      const existingAttendance = await Attendance.findOne({
-        employeeId,
-        date: { $gte: today },
-      });
-  
-      if (existingAttendance) {
-        return res.status(400).json({ message: 'You have already clocked in today' });
-      }
-  
-      // Create a new attendance record
-      const newAttendance = new Attendance({
-        employeeId,
-        companyId,
-        clockIn: new Date(),
-        status: 'Present',
-      });
-  
-      await newAttendance.save();
-  
-      res.status(201).json(newAttendance);
-    } catch (error) {
-      console.error('Error:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  });
-  router.post('/clock-out', async (req, res) => {
-    try {
-      const { employeeId } = req.body;
-  
-      // Validate required fields
-      if (!employeeId) {
-        return res.status(400).json({ message: 'Employee ID is required' });
-      }
-  
-      // Find today's attendance record
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); // Set time to the start of the day
-  
-      const attendance = await Attendance.findOne({
-        employeeId,
-        date: { $gte: today },
-      });
-  
-      if (!attendance) {
-        return res.status(404).json({ message: 'You have not clocked in today' });
-      }
-  
-      if (attendance.clockOut) {
-        return res.status(400).json({ message: 'You have already clocked out today' });
-      }
-  
-      // Set clock-out time
-      attendance.clockOut = new Date();
-  
-      // Calculate total hours worked
-      const clockInTime = attendance.clockIn.getTime();
-      const clockOutTime = attendance.clockOut.getTime();
-      const totalHours = (clockOutTime - clockInTime) / (1000 * 60 * 60); // Convert milliseconds to hours
-  
-      attendance.totalHours = totalHours;
-  
-      // Calculate overtime (assuming standard work hours are 8 hours)
-      const standardWorkHours = 8;
-      if (totalHours > standardWorkHours) {
-        attendance.overtime = totalHours - standardWorkHours;
-      }
-  
-      await attendance.save();
-  
-      res.json(attendance);
-    } catch (error) {
-      console.error('Error:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  });
+/**
+ * Attendance Routes
+ * Defines all attendance-related endpoints with proper MVC structure
+ * 
+ * @module routes/attendanceRoutes
+ */
+
+const express = require('express');
+const router = express.Router();
+const attendanceController = require('../controllers/attendanceController');
+const authMiddleware = require('./auth.middleware');
+
+/**
+ * @route   POST /api/attendance/clock-in
+ * @desc    Clock in for the day
+ * @access  All authenticated users
+ */
+router.post('/clock-in', authMiddleware, attendanceController.clockIn);
+
+/**
+ * @route   POST /api/attendance/clock-out
+ * @desc    Clock out for the day
+ * @access  All authenticated users
+ */
+router.post('/clock-out', authMiddleware, attendanceController.clockOut);
+
+/**
+ * @route   POST /api/attendance/break/start
+ * @desc    Start a break
+ * @access  All authenticated users
+ */
+router.post('/break/start', authMiddleware, attendanceController.startBreak);
+
+/**
+ * @route   POST /api/attendance/break/end
+ * @desc    End a break
+ * @access  All authenticated users
+ */
+router.post('/break/end', authMiddleware, attendanceController.endBreak);
+
+/**
+ * @route   GET /api/attendance/me
+ * @desc    Get my attendance history
+ * @access  All authenticated users
+ */
+router.get('/me', authMiddleware, attendanceController.getMyAttendance);
+
+/**
+ * @route   GET /api/attendance/stats
+ * @desc    Get attendance statistics
+ * @access  Admin, HR, Manager
+ */
+router.get('/stats', authMiddleware, attendanceController.getStats);
+
+/**
+ * @route   GET /api/attendance
+ * @desc    Get all attendance records with filtering
+ * @access  Admin, HR, Manager
+ */
+router.get('/', authMiddleware, attendanceController.getAllAttendance);
+
+/**
+ * @route   POST /api/attendance/regularize
+ * @desc    Request attendance regularization
+ * @access  All authenticated users
+ */
+router.post('/regularize', authMiddleware, attendanceController.requestRegularization);
+
+/**
+ * @route   PUT /api/attendance/:id/approve
+ * @desc    Approve/reject regularization request
+ * @access  Manager, HR
+ */
+router.put('/:id/approve', authMiddleware, attendanceController.approveRegularization);
 
 module.exports = router;

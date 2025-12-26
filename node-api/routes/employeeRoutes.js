@@ -1,15 +1,114 @@
+/**
+ * Employee Routes
+ * Defines all employee-related endpoints
+ * 
+ * @module routes/employeeRoutes
+ */
+
 const express = require('express');
 const router = express.Router();
-const { Types } = require('mongoose');
-const { ObjectId } = Types;
-const Employee = require('../schemas/employee_v2');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const config = require('../config/environment');
+const employeeController = require('../controllers/employeeController');
 const { validate, schemas } = require('../middleware/validation');
 const { authLimiter, createLimiter } = require('../middleware/rateLimiter');
 const authMiddleware = require('./auth.middleware');
 
+// ============================================
+// PUBLIC ROUTES (No authentication required)
+// ============================================
+
+/**
+ * @route   POST /api/employees/login
+ * @desc    Employee login
+ * @access  Public
+ */
+router.post('/login', authLimiter, employeeController.login);
+
+// ============================================
+// PROTECTED ROUTES (Authentication required)
+// ============================================
+
+/**
+ * @route   GET /api/employees/me
+ * @desc    Get current employee profile
+ * @access  All authenticated users
+ */
+router.get('/me', authMiddleware, employeeController.getMyProfile);
+
+/**
+ * @route   GET /api/employees/:id/hierarchy
+ * @desc    Get employee hierarchy (manager and subordinates)
+ * @access  All authenticated users
+ */
+router.get('/:id/hierarchy', authMiddleware, employeeController.getHierarchy);
+
+/**
+ * @route   POST /api/employees
+ * @desc    Create new employee
+ * @access  Admin, HR
+ */
+router.post('/', createLimiter, validate(schemas.createEmployee), employeeController.createEmployee);
+
+/**
+ * @route   GET /api/employees
+ * @desc    Get all employees with filtering and pagination
+ * @access  Admin, HR, Manager
+ */
+router.get('/', authMiddleware, employeeController.getEmployees);
+
+/**
+ * @route   GET /api/employees/:id
+ * @desc    Get employee by ID
+ * @access  Admin, HR, Manager
+ */
+router.get('/:id', authMiddleware, employeeController.getEmployeeById);
+
+/**
+ * @route   PUT /api/employees/:id
+ * @desc    Update employee
+ * @access  Admin, HR
+ */
+router.put('/:id', authMiddleware, validate(schemas.updateEmployee), employeeController.updateEmployee);
+
+/**
+ * @route   PUT /api/employees/:id/salary
+ * @desc    Update employee salary
+ * @access  Admin, HR
+ */
+router.put('/:id/salary', authMiddleware, employeeController.updateSalary);
+
+/**
+ * @route   PUT /api/employees/:id/status
+ * @desc    Change employee status
+ * @access  Admin, HR
+ */
+router.put('/:id/status', authMiddleware, employeeController.changeStatus);
+
+/**
+ * @route   POST /api/employees/:id/documents
+ * @desc    Upload employee document
+ * @access  Admin, HR
+ */
+router.post('/:id/documents', authMiddleware, employeeController.uploadDocument);
+
+/**
+ * @route   GET /api/employees/:id/documents
+ * @desc    Get employee documents
+ * @access  Admin, HR, Self
+ */
+router.get('/:id/documents', authMiddleware, employeeController.getDocuments);
+
+/**
+ * @route   DELETE /api/employees/:id
+ * @desc    Delete employee (soft delete)
+ * @access  Admin
+ */
+router.delete('/:id', authMiddleware, employeeController.deleteEmployee);
+
+module.exports = router;
+
+// OLD CODE BELOW - TO BE REMOVED
+// ================================
+/*
 // new Employee
 router.post('/', createLimiter, validate(schemas.createEmployee), async (req, res, next) => {
   try {
@@ -322,3 +421,4 @@ router.get('/:employeeId/leave-requests', async (req, res) => {
   }
 });
 module.exports = router;
+*/

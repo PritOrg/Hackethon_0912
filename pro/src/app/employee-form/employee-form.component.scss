@@ -1,0 +1,123 @@
+/* Modern Input Style - Using standard CSS instead of @apply */
+.modern-input {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgb(226 232 240);
+  background-color: white;
+  color: rgb(15 23 42);
+  transition: all 0.2s;
+}
+
+.modern-input::placeholder {
+  color: rgb(148 163 184);
+}
+
+.modern-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  border-color: rgb(59 130 246);
+}
+
+/* Dark mode support */
+:host-context(.dark) .modern-input,
+.dark .modern-input {
+  background-color: rgb(30 41 59);
+  border-color: rgb(51 65 85);
+  color: white;
+}
+
+:host-context(.dark) .modern-input:focus,
+.dark .modern-input:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+}
+
+/* Invalid state */
+.modern-input.ng-invalid.ng-touched {
+  border-color: rgb(252 165 165);
+}
+
+.modern-input.ng-invalid.ng-touched:focus {
+  border-color: rgb(239 68 68);
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+/* Select dropdown specific styling */
+select.modern-input {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Simple fade animation for step switching */
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(226 232 240);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(203 213 225);
+}
+
+/* Dark mode scrollbar */
+:host-context(.dark) ::-webkit-scrollbar-thumb,
+.dark ::-webkit-scrollbar-thumb {
+  background-color: rgb(51 65 85);
+}
+
+:host-context(.dark) ::-webkit-scrollbar-thumb:hover,
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(71 85 105);
+}
+
+/* Smooth transitions for step navigation */
+.overflow-y-auto {
+  scroll-behavior: smooth;
+}
+
+/* Profile picture hover effect */
+.relative.group:hover .absolute {
+  transform: scale(1.1);
+  transition: transform 0.2s ease-out;
+}
+
+/* Input focus-within effect for better UX */
+.space-y-2:focus-within label {
+  color: rgb(37 99 235);
+  transition: color 0.2s ease-out;
+}
+
+:host-context(.dark) .space-y-2:focus-within label,
+.dark .space-y-2:focus-within label {
+  color: rgb(96 165 250);
+}

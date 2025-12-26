@@ -2,22 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { EmployeeApiService } from '../services/employee-api.service';
-
-interface Employee {
-  _id: string;
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  role: string;
-  department: string;
-  position: string;
-  jobShift: 'Morning' | 'Evening' | 'Night';
-  profilePic?: string;
-  salary: Map<string, number>;
-  joiningDate: Date;
-}
+import { Router } from '@angular/router';
+import { Employee } from '../core/models/employee.model';
 
 @Component({
   selector: 'app-employee-list',
@@ -32,8 +18,11 @@ export class EmployeeListComponent implements OnInit {
   isLoading = false;
   currentPage = 1;
   itemsPerPage = 10;
-  
-  constructor(private _employeeService: EmployeeApiService) {}
+  viewMode: 'list' | 'grid' = 'list';
+  constructor(
+    private _employeeService: EmployeeApiService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.searchControl.valueChanges.pipe(
@@ -50,14 +39,33 @@ export class EmployeeListComponent implements OnInit {
   loadEmployees() {
     this.isLoading = true;
     this._employeeService.getEmployees().subscribe(
-      (employees: Employee[]): void => {
-      this.employees = employees;
-      this.filteredEmployees = [...this.employees];
-      this.isLoading = false;
+      (response: any): void => {
+        console.log('📋 Raw employees response:', response);
+        
+        // Backend wraps response in { success, data, message }
+        // Extract the actual array from response.data
+        const employeesData = response.data || response;
+        
+        console.log('📋 Extracted employees data:', employeesData);
+        console.log('📋 Is array?', Array.isArray(employeesData));
+        
+        if (Array.isArray(employeesData)) {
+          this.employees = employeesData as Employee[];
+          this.filteredEmployees = [...this.employees];
+          console.log('✅ Loaded', this.employees.length, 'employees');
+        } else {
+          console.error('❌ Response is not an array:', employeesData);
+          this.employees = [];
+          this.filteredEmployees = [];
+        }
+        
+        this.isLoading = false;
       },
-      (error: any): void => {
-      console.error('Error loading employees:', error);
-      this.isLoading = false;
+      (error): void => {
+        console.error('❌ Error loading employees:', error);
+        this.employees = [];
+        this.filteredEmployees = [];
+        this.isLoading = false;
       }
     );
   }
@@ -77,17 +85,22 @@ export class EmployeeListComponent implements OnInit {
 
   deleteEmployee(id: string) {
     if (confirm('Are you sure you want to delete this employee?')) {
-      this.employees = this.employees.filter(emp => emp._id !== id);
-      this.filteredEmployees = this.filteredEmployees.filter(emp => emp._id !== id);
+      this._employeeService.deleteEmployee(id).subscribe({
+        next: () => {
+          this.employees = this.employees.filter(emp => emp._id !== id);
+          this.filteredEmployees = this.filteredEmployees.filter(emp => emp._id !== id);
+        },
+        error: (err) => console.error('Error deleting employee:', err)
+      });
     }
   }
 
   editEmployee(id: string) {
-    console.log('Edit employee:', id);
+    this.router.navigate(['/edit-employee', id]);
   }
 
   addEmployee() {
-    console.log('Add new employee');
+    this.router.navigate(['/add-employee']);
   }
 
   get paginatedEmployees() {

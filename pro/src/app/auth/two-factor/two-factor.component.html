@@ -1,0 +1,70 @@
+<div class="two-factor-container">
+  <div class="two-factor-card">
+    <!-- Logo -->
+    <div class="logo-section">
+      <img src="assets/logo.svg" alt="Company Logo" class="logo" />
+      <h1 class="form-title">Two-Factor Authentication</h1>
+      <p class="form-subtitle">
+        Enter the 6-digit verification code sent to <strong>{{ getMaskedEmail() }}</strong>
+      </p>
+    </div>
+
+    <!-- 2FA Code Form -->
+    <form [formGroup]="twoFactorForm" (ngSubmit)="onSubmit()" class="two-factor-form">
+      <div class="code-inputs">
+        <input
+          *ngFor="let i of [1,2,3,4,5,6]"
+          [id]="'code' + i"
+          type="text"
+          [formControlName]="'code' + i"
+          class="code-input"
+          maxlength="1"
+          pattern="\d"
+          inputmode="numeric"
+          autocomplete="off"
+          (input)="onCodeInput($event, i)"
+          (keydown)="onCodeKeyDown($event, i)"
+          (paste)="onCodePaste($event)"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="twoFactorForm.invalid"
+      >
+        Verify Code
+      </button>
+
+      <div class="resend-section">
+        <span>Didn't receive the code?</span>
+        <button
+          type="button"
+          class="link-button"
+          (click)="resendCode()"
+        >
+          Resend code
+        </button>
+      </div>
+
+      <div class="back-link">
+        <button
+          type="button"
+          class="link-button"
+          (click)="navigateToLogin()"
+        >
+          ← Back to Sign In
+        </button>
+      </div>
+    </form>
+
+    <!-- Security Note -->
+    <div class="security-note">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+      <span>Your account is protected with two-factor authentication for enhanced security.</span>
+    </div>
+  </div>
+</div>

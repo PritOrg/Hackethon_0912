@@ -1,0 +1,125 @@
+<div class="login-container">
+  <div class="login-card">
+    <!-- Logo -->
+    <div class="logo-section">
+      <img src="assets/logo.svg" alt="Company Logo" class="logo" />
+      <h1 class="app-title">HR Management System</h1>
+    </div>
+
+    <!-- Login Form -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <h2 class="form-title">Sign In</h2>
+      <p class="form-subtitle">Enter your credentials to access your account</p>
+
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address</label>
+        <div class="input-wrapper">
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            class="form-control"
+            [class.error]="hasError('email', 'required') || hasError('email', 'email')"
+            placeholder="you@company.com"
+            autocomplete="email"
+          />
+          <span class="input-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+          </span>
+        </div>
+        <div class="error-message" *ngIf="hasError('email', 'required')">
+          Email is required
+        </div>
+        <div class="error-message" *ngIf="hasError('email', 'email')">
+          Please enter a valid email address
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <div class="input-wrapper">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            class="form-control"
+            [class.error]="hasError('password', 'required') || hasError('password', 'minlength')"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="togglePasswordVisibility()"
+            tabindex="-1"
+          >
+            <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+              <line x1="1" y1="1" x2="23" y2="23"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="error-message" *ngIf="hasError('password', 'required')">
+          Password is required
+        </div>
+        <div class="error-message" *ngIf="hasError('password', 'minlength')">
+          Password must be at least 8 characters
+        </div>
+      </div>
+
+      <!-- Remember Me & Forgot Password -->
+      <div class="form-options">
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            formControlName="rememberMe"
+            class="checkbox"
+          />
+          <span>Remember me</span>
+        </label>
+        <button
+          type="button"
+          class="link-button"
+          (click)="navigateToForgotPassword()"
+        >
+          Forgot password?
+        </button>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="loginForm.invalid"
+      >
+        Sign In
+      </button>
+
+      <!-- Register Link -->
+      <div class="register-link">
+        <span>Don't have an account?</span>
+        <button
+          type="button"
+          class="link-button"
+          (click)="navigateToRegister()"
+        >
+          Register your company
+        </button>
+      </div>
+    </form>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>&copy; 2024 HR Management System. All rights reserved.</p>
+    </div>
+  </div>
+</div>

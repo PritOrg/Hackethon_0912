@@ -1,8 +1,86 @@
+/**
+ * Asset Routes
+ * Defines all asset management endpoints with proper MVC structure
+ * 
+ * @module routes/assetRoutes
+ */
+
 const express = require('express');
 const router = express.Router();
-const Asset = require('../schemas/asset');
-const Employee = require('../schemas/employee_v2');
+const assetController = require('../controllers/assetController');
 const authMiddleware = require('./auth.middleware');
+
+/**
+ * @route   POST /api/assets
+ * @desc    Create new asset
+ * @access  Admin, IT
+ */
+router.post('/', authMiddleware, assetController.createAsset);
+
+/**
+ * @route   GET /api/assets/me
+ * @desc    Get assets assigned to me
+ * @access  All authenticated users
+ */
+router.get('/me', authMiddleware, assetController.getMyAssets);
+
+/**
+ * @route   GET /api/assets/stats/:companyId
+ * @desc    Get asset statistics
+ * @access  Admin, IT, HR
+ */
+router.get('/stats/:companyId', authMiddleware, assetController.getAssetStats);
+
+/**
+ * @route   GET /api/assets
+ * @desc    Get all assets with filtering
+ * @access  Admin, IT, HR
+ */
+router.get('/', authMiddleware, assetController.getAssets);
+
+/**
+ * @route   GET /api/assets/:id
+ * @desc    Get asset by ID
+ * @access  Admin, IT, HR
+ */
+router.get('/:id', authMiddleware, assetController.getAssetById);
+
+/**
+ * @route   PUT /api/assets/:id
+ * @desc    Update asset
+ * @access  Admin, IT
+ */
+router.put('/:id', authMiddleware, assetController.updateAsset);
+
+/**
+ * @route   POST /api/assets/:id/assign
+ * @desc    Assign asset to employee
+ * @access  Admin, IT
+ */
+router.post('/:id/assign', authMiddleware, assetController.assignAsset);
+
+/**
+ * @route   POST /api/assets/:id/return
+ * @desc    Return asset from employee
+ * @access  Admin, IT
+ */
+router.post('/:id/return', authMiddleware, assetController.returnAsset);
+
+/**
+ * @route   POST /api/assets/:id/maintenance
+ * @desc    Add maintenance record
+ * @access  Admin, IT
+ */
+router.post('/:id/maintenance', authMiddleware, assetController.addMaintenance);
+
+/**
+ * @route   DELETE /api/assets/:id
+ * @desc    Delete asset (soft delete)
+ * @access  Admin, IT
+ */
+router.delete('/:id', authMiddleware, assetController.deleteAsset);
+
+module.exports = router;
 
 // Create new asset
 router.post('/', authMiddleware, async (req, res) => {
