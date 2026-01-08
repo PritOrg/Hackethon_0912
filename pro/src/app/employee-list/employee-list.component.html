@@ -25,16 +25,31 @@
   <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row gap-4">
     <div class="relative flex-1">
       <i class="fa-solid fa-search absolute left-3 top-3 text-slate-400"></i>
-      <input [formControl]="searchControl" type="text" placeholder="Search by name, role or ID..." 
+      <input [formControl]="searchControl" type="text" placeholder="Search employees..." 
              class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all">
     </div>
-    <div class="flex gap-3">
-      <select class="px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-600 dark:text-slate-300 focus:border-blue-500 outline-none cursor-pointer">
-        <option value="all">All Departments</option>
-        <option value="IT">IT & Engineering</option>
-        <option value="HR">Human Resources</option>
-      </select>
-    </div>
+
+    <select [(ngModel)]="deptFilter" (change)="onFilterChange()" class="px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-600 dark:text-slate-300 focus:border-blue-500 outline-none cursor-pointer">
+      <option value="all">All Departments</option>
+      <option value="IT">IT & Engineering</option>
+      <option value="HR">Human Resources</option>
+    </select>
+
+    <select [(ngModel)]="statusFilter" (change)="onFilterChange()" 
+            class="px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium focus:border-blue-500 outline-none cursor-pointer"
+            [ngClass]="{
+              'text-green-600': statusFilter === 'Active',
+              'text-red-500': statusFilter === 'Inactive' || statusFilter === 'Terminated',
+              'text-slate-600': statusFilter === 'all'
+            }">
+      <option value="Active">🟢 Active Only</option>
+      <option value="all">📋 All Statuses</option>
+      <option value="Inactive">⚫ Inactive/Archived</option>
+      <option value="Probation">🟡 Probation</option>
+      <option value="Terminated">🔴 Terminated</option>
+      <option value="Resigned">⚪ Resigned</option>
+      <option value="On Leave">🔵 On Leave</option>
+    </select>
   </div>
 
   <div *ngIf="viewMode === 'list'" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
@@ -79,8 +94,15 @@
               {{ emp.joiningDate | date:'mediumDate' }}
             </td>
             <td class="px-6 py-4 text-right">
-              <button (click)="editEmployee(emp._id)" class="text-slate-400 hover:text-blue-600 mx-2 transition-colors"><i class="fa-solid fa-pen"></i></button>
-              <button (click)="deleteEmployee(emp._id)" class="text-slate-400 hover:text-red-600 transition-colors"><i class="fa-solid fa-trash"></i></button>
+              <button (click)="editEmployee(emp._id)" class="text-slate-400 hover:text-blue-600 mx-2 transition-colors" title="Edit"><i class="fa-solid fa-pen"></i></button>
+
+              <ng-container *ngIf="emp.status !== 'Inactive' && emp.status !== 'Terminated'; else restoreBtn">
+                <button (click)="deleteEmployee(emp._id)" class="text-slate-400 hover:text-red-600 transition-colors" title="Archive/Delete"><i class="fa-solid fa-trash"></i></button>
+              </ng-container>
+
+              <ng-template #restoreBtn>
+                <button (click)="restoreEmployee(emp._id)" class="text-slate-400 hover:text-green-600 transition-colors" title="Restore/Reactivate"><i class="fa-solid fa-rotate-left"></i></button>
+              </ng-template>
             </td>
           </tr>
         </tbody>
@@ -90,8 +112,20 @@
 
   <div *ngIf="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
     <div *ngFor="let emp of paginatedEmployees" class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 flex flex-col items-center text-center hover:shadow-lg transition-all duration-300 group relative">
-        <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button (click)="editEmployee(emp._id)" class="text-slate-400 hover:text-blue-600"><i class="fa-solid fa-pen-to-square"></i></button>
+        <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+            <button (click)="editEmployee(emp._id)" class="text-slate-400 hover:text-blue-600 bg-white dark:bg-slate-900 rounded-full p-1.5 shadow-sm"><i class="fa-solid fa-pen"></i></button>
+            
+            <ng-container *ngIf="emp.status !== 'Inactive' && emp.status !== 'Terminated'; else restoreGridBtn">
+              <button (click)="deleteEmployee(emp._id)" class="text-slate-400 hover:text-red-600 bg-white dark:bg-slate-900 rounded-full p-1.5 shadow-sm">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </ng-container>
+
+            <ng-template #restoreGridBtn>
+              <button (click)="restoreEmployee(emp._id)" class="text-slate-400 hover:text-green-600 bg-white dark:bg-slate-900 rounded-full p-1.5 shadow-sm">
+                <i class="fa-solid fa-rotate-left"></i>
+              </button>
+            </ng-template>
         </div>
 
         <img [src]="'https://ui-avatars.com/api/?name=' + emp.firstName + '+' + emp.lastName + '&background=random'" class="h-20 w-20 rounded-full mb-4 shadow-md">

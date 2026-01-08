@@ -1,24 +1,36 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 
 export interface AdminDashboardData {
-  totalEmployees: number;
-  activeEmployees: number;
-  newHiresThisMonth: number;
-  attritionRate: string;
-  todayAttendance: number;
-  absentToday: number;
-  pendingLeaveRequests: number;
-  totalProjects: number;
-  activeProjects: number;
-  budgetData: {
+  employees: {
+    total: number;
+    active: number;
+    newHiresThisMonth: number;
+    attritionRate: number;
+  };
+  attendance: {
+    presentToday: number;
+    absentToday: number;
+    attendanceRate: string;
+  };
+  leaves: {
+    pendingRequests: number;
+  };
+  projects: {
+    total: number;
+    active: number;
     totalBudget: number;
     totalSpent: number;
+    remaining: number;
   };
-  totalAssets: number;
-  assignedAssets: number;
+  assets: {
+    total: number;
+    assigned: number;
+    available: number;
+  };
 }
 
 @Injectable({
@@ -31,7 +43,9 @@ export class DashboardService {
 
   getAdminDashboard(companyId: string): Observable<AdminDashboardData> {
     const params = new HttpParams().set('companyId', companyId);
-    return this.http.get<AdminDashboardData>(`${this.apiUrl}/admin`, { params });
+    return this.http.get<any>(`${this.apiUrl}/admin`, { params }).pipe(
+      map(response => response.data)
+    );
   }
 
   getHRDashboard(companyId: string): Observable<any> {

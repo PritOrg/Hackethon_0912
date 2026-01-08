@@ -26,8 +26,9 @@ export class EmployeeApiService {
   private _api = `${environment.apiUrl}/employee`;
   
   constructor(private _http: HttpClient) { }
-  getEmployees():Observable<Employee[]> {
-    return this._http.get<Employee[]>(`${this._api}`);
+  
+  getEmployees(params?: any): Observable<Employee[]> {
+    return this._http.get<Employee[]>(`${this._api}`, { params });
   }
 
   getEmployeeById(id: string): Observable<any> {
@@ -44,5 +45,9 @@ export class EmployeeApiService {
 
   deleteEmployee(id: string): Observable<any> {
     return this._http.delete<any>(`${this._api}/${id}`);
+  }
+
+  restoreEmployee(id: string): Observable<any> {
+    return this._http.post<any>(`${this._api}/${id}/restore`, {});
   }
 }

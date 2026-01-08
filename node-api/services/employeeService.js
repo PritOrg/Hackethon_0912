@@ -80,12 +80,39 @@ const getEmployees = async (filters) => {
     search,
     page = 1,
     limit = 10,
-    sortBy = '-createdAt'
+    sortBy = '-createdAt',
+    includeInactive = false // New flag
   } = filters;
 
-  // Build query filter
-  const query = buildFilter({ companyId, department, status }, ['companyId', 'department', 'status']);
-  query.isDeleted = false;
+  console.log('🔍 getEmployees called with filters:', { status, includeInactive, department, companyId });
+
+  // Build query filter - start with companyId and department only
+  const query = buildFilter({ companyId, department }, ['companyId', 'department']);
+  
+  // Handle status and deletion filtering
+  if (status === 'Inactive') {
+    // When specifically requesting Inactive, include soft-deleted employees with Inactive status
+    query.status = 'Inactive';
+    query.isDeleted = true; // Soft-deleted employees have isDeleted=true and status=Inactive
+    console.log('📌 Fetching Inactive (soft-deleted) employees');
+  } else if (status) {
+    // For other specific statuses, get non-deleted employees with that status
+    query.status = status;
+    query.isDeleted = false;
+    console.log('📌 Fetching employees with status:', status);
+  } else if (includeInactive) {
+    // includeInactive=true means fetch all employees (both deleted and active)
+    // Explicitly DO NOT filter by status - include all statuses
+    query.isDeleted = { $in: [true, false] };
+    console.log('📌 Fetching ALL employees (all statuses, both deleted and active)');
+  } else {
+    // Default: fetch only non-deleted, non-Inactive employees (Active employees)
+    query.isDeleted = false;
+    query.status = { $ne: 'Inactive' };
+    console.log('📌 Fetching Active employees (default)');
+  }
+
+  console.log('🔍 Query filter:', JSON.stringify(query, null, 2));
 
   // Add search if provided
   if (search) {
@@ -117,6 +144,7 @@ const getEmployees = async (filters) => {
     Employee.countDocuments(query)
   ]);
 
+  console.log('✅ getEmployees returning:', { foundCount: employees.length, totalCount: total });
   return { employees, total };
 };
 
@@ -222,6 +250,36 @@ const deleteEmployee = async (employeeId, deletedBy = null) => {
   employee.status = 'Inactive';
   
   await employee.save();
+};
+
+/**
+ * Restore a soft-deleted employee
+ * @param {string} employeeId - Employee ID
+ * @param {string} restoredBy - ID of user performing restoration
+ * @returns {Promise<Object>} Updated employee
+ */
+const restoreEmployee = async (employeeId, restoredBy = null) => {
+  const employee = await Employee.findOne({ _id: employeeId, isDeleted: true });
+  
+  if (!employee) {
+    throw new Error('Employee not found or is not deleted');
+  }
+
+  employee.isDeleted = false;
+  employee.deletedAt = undefined;
+  employee.deletedBy = undefined;
+  employee.status = 'Active'; // Default back to active
+  employee.updatedBy = restoredBy;
+  
+  await employee.save();
+  
+  // Return without sensitive data
+  const employeeObject = employee.toObject();
+  delete employeeObject.password;
+  delete employeeObject.bankDetails;
+  delete employeeObject.twoFactorSecret;
+  
+  return employeeObject;
 };
 
 /**
@@ -341,6 +399,7 @@ module.exports = {
   getEmployeeById,
   updateEmployee,
   deleteEmployee,
+  restoreEmployee,
   authenticateEmployee,
   updateSalary,
   getEmployeeHierarchy

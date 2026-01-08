@@ -135,6 +135,16 @@ const deleteEmployee = asyncHandler(async (req, res) => {
 });
 
 /**
+ * Restore a soft-deleted employee
+ * POST /api/employees/:id/restore
+ * Access: Admin
+ */
+const restoreEmployee = asyncHandler(async (req, res) => {
+  const employee = await employeeService.restoreEmployee(req.params.id, req.user?.id);
+  successResponse(res, employee, 'Employee restored successfully');
+});
+
+/**
  * Employee login
  * POST /api/employees/login
  * Access: Public
@@ -212,6 +222,7 @@ module.exports = {
   updateSalary,
   changeStatus,
   deleteEmployee,
+  restoreEmployee,
   login,
   getHierarchy,
   uploadDocument,

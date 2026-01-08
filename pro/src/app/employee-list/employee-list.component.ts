@@ -15,10 +15,16 @@ export class EmployeeListComponent implements OnInit {
   employees: Employee[] = [];
   filteredEmployees: Employee[] = [];
   searchControl = new FormControl('');
+  
+  // New Filter Controls
+  statusFilter: string = 'Active'; // Default to Active
+  deptFilter: string = 'all';
+
   isLoading = false;
   currentPage = 1;
   itemsPerPage = 10;
   viewMode: 'list' | 'grid' = 'list';
+  
   constructor(
     private _employeeService: EmployeeApiService,
     private router: Router
@@ -28,69 +34,98 @@ export class EmployeeListComponent implements OnInit {
     this.searchControl.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged()
-    ).subscribe(value => {
-      this.filterEmployees(value || '');
+    ).subscribe(() => {
+      this.applyLocalFilters();
     });
 
-    // Load initial data
     this.loadEmployees();
   }
 
+  // Updated to pass filters to backend
   loadEmployees() {
     this.isLoading = true;
-    this._employeeService.getEmployees().subscribe(
-      (response: any): void => {
+    
+    // Prepare API filters
+    const params: any = {};
+    
+    if (this.statusFilter === 'all') {
+      params.includeInactive = true; // Backend flag to fetch all statuses
+    } else {
+      params.status = this.statusFilter;
+    }
+
+    if (this.deptFilter !== 'all') {
+      params.department = this.deptFilter;
+    }
+
+    this._employeeService.getEmployees(params).subscribe({
+      next: (response: any) => {
         console.log('📋 Raw employees response:', response);
         
-        // Backend wraps response in { success, data, message }
-        // Extract the actual array from response.data
-        const employeesData = response.data || response;
+        const data = response.data || response;
+        this.employees = Array.isArray(data) ? data : [];
         
-        console.log('📋 Extracted employees data:', employeesData);
-        console.log('📋 Is array?', Array.isArray(employeesData));
-        
-        if (Array.isArray(employeesData)) {
-          this.employees = employeesData as Employee[];
-          this.filteredEmployees = [...this.employees];
-          console.log('✅ Loaded', this.employees.length, 'employees');
-        } else {
-          console.error('❌ Response is not an array:', employeesData);
-          this.employees = [];
-          this.filteredEmployees = [];
-        }
-        
+        console.log('✅ Loaded', this.employees.length, 'employees');
+        this.applyLocalFilters();
         this.isLoading = false;
       },
-      (error): void => {
+      error: (error) => {
         console.error('❌ Error loading employees:', error);
-        this.employees = [];
-        this.filteredEmployees = [];
         this.isLoading = false;
       }
-    );
+    });
   }
 
-  filterEmployees(searchTerm: string) {
-    this.filteredEmployees = this.employees.filter(employee => 
-      employee.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      employee.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      employee.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      employee.department.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  // Handle status/department dropdown change
+  onFilterChange() {
+    this.currentPage = 1; // Reset to page 1
+    this.loadEmployees(); // Re-fetch from server
   }
 
-  getMinValue(a: number, b: number): number {
-    return Math.min(a, b);
-  } 
+  applyLocalFilters() {
+    const searchTerm = (this.searchControl.value || '').toLowerCase();
+    
+    this.filteredEmployees = this.employees.filter(emp => {
+      const matchesSearch = 
+        emp.firstName.toLowerCase().includes(searchTerm) ||
+        emp.lastName.toLowerCase().includes(searchTerm) ||
+        emp.email.toLowerCase().includes(searchTerm);
+        
+      return matchesSearch;
+    });
+  }
+
+  // Restore functionality
+  restoreEmployee(id: string) {
+    if (confirm('Are you sure you want to reactivate this employee?')) {
+      this._employeeService.restoreEmployee(id).subscribe({
+        next: () => {
+          // Remove from list if viewing "Inactive" list
+          if (this.statusFilter === 'Inactive') {
+            this.employees = this.employees.filter(e => e._id !== id);
+            this.applyLocalFilters();
+          } else {
+            this.loadEmployees();
+          }
+        },
+        error: (err) => console.error('❌ Error restoring employee:', err)
+      });
+    }
+  }
 
   deleteEmployee(id: string) {
-    if (confirm('Are you sure you want to delete this employee?')) {
+    if (confirm('Are you sure you want to archive/delete this employee?')) {
       this._employeeService.deleteEmployee(id).subscribe({
         next: () => {
-          this.employees = this.employees.filter(emp => emp._id !== id);
-          this.filteredEmployees = this.filteredEmployees.filter(emp => emp._id !== id);
+          // If viewing "Active", remove immediately. Otherwise refresh.
+          if (this.statusFilter === 'Active') {
+            this.employees = this.employees.filter(e => e._id !== id);
+            this.applyLocalFilters();
+          } else {
+            this.loadEmployees();
+          }
         },
-        error: (err) => console.error('Error deleting employee:', err)
+        error: (err) => console.error('❌ Error deleting employee:', err)
       });
     }
   }
@@ -101,6 +136,10 @@ export class EmployeeListComponent implements OnInit {
 
   addEmployee() {
     this.router.navigate(['/add-employee']);
+  }
+
+  getMinValue(a: number, b: number): number {
+    return Math.min(a, b);
   }
 
   get paginatedEmployees() {

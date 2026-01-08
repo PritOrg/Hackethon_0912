@@ -104,6 +104,13 @@ router.get('/:id/documents', authMiddleware, employeeController.getDocuments);
  */
 router.delete('/:id', authMiddleware, employeeController.deleteEmployee);
 
+/**
+ * @route   POST /api/employees/:id/restore
+ * @desc    Restore a soft-deleted employee
+ * @access  Admin
+ */
+router.post('/:id/restore', authMiddleware, employeeController.restoreEmployee);
+
 module.exports = router;
 
 // OLD CODE BELOW - TO BE REMOVED

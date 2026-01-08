@@ -46,6 +46,14 @@ export class EmployeeFormComponent implements OnInit {
   ngOnInit(): void {
     this.employeeId = this.route.snapshot.paramMap.get('id');
     this.isEditMode = !!this.employeeId;
+
+    // Dynamically set password validators based on mode
+    if (this.isEditMode) {
+      this.employeeForm.get('password')?.clearValidators();
+    } else {
+      this.employeeForm.get('password')?.setValidators([Validators.required, Validators.minLength(8)]);
+    }
+    this.employeeForm.get('password')?.updateValueAndValidity();
     
     // Set companyId from current user (synchronous)
     const currentUser = this.authService.getCurrentUser();
@@ -74,11 +82,59 @@ export class EmployeeFormComponent implements OnInit {
           console.log('📝 Extracted employee data:', employee);
           
           if (employee && employee._id) {
-            // Remove the password field for edit mode
             const employeeData = { ...employee };
+            
+            // --- DATA TRANSFORMATION FOR FORM PATCHING ---
+
+            // 1. Sanitize dates to 'yyyy-MM-dd'
+            if (employeeData.birthdate) {
+              employeeData.birthdate = new Date(employeeData.birthdate).toISOString().split('T')[0];
+            }
+            if (employeeData.joiningDate) {
+              employeeData.joiningDate = new Date(employeeData.joiningDate).toISOString().split('T')[0];
+            }
+
+            // 2. Extract Department ID if it's an object
+            if (employeeData.department && typeof employeeData.department === 'object') {
+              employeeData.department = (employeeData.department as any)._id;
+            }
+
+            // 3. Restructure salary for the form's nested group
+            if (employeeData.salary && typeof employeeData.salary === 'object') {
+              employeeData.salary = {
+                amount: (employeeData.salary as any).amount,
+                currency: (employeeData.salary as any).currency,
+                structure: (employeeData.salary as any).structure
+              };
+            }
+            
+            // 5. Restructure Address and Emergency Contact for nested groups
+            if (employeeData.address && typeof employeeData.address === 'object') {
+              employeeData.address = {
+                street: (employeeData.address as any).street,
+                city: (employeeData.address as any).city,
+                state: (employeeData.address as any).state,
+                zipCode: (employeeData.address as any).zipCode,
+                country: (employeeData.address as any).country,
+              };
+            }
+            if (employeeData.emergencyContact && typeof employeeData.emergencyContact === 'object') {
+              employeeData.emergencyContact = {
+                name: (employeeData.emergencyContact as any).name,
+                relationship: (employeeData.emergencyContact as any).relationship,
+                phoneNumber: (employeeData.emergencyContact as any).phoneNumber,
+              };
+            }
+
+            // 4. Ensure companyId is a string
+            if (employeeData.companyId && typeof employeeData.companyId === 'object') {
+              employeeData.companyId = (employeeData.companyId as any)._id;
+            }
+
+            // Remove password for security in edit mode
             delete employeeData.password;
             
-            console.log('📝 Patching form with employee data:', employeeData);
+            console.log('📝 Patching form with transformed data:', employeeData);
             this.employeeForm.patchValue(employeeData);
             console.log('✅ Form patched successfully');
           } else {
@@ -140,7 +196,7 @@ export class EmployeeFormComponent implements OnInit {
       }),
       
       // Account Credentials (only for new employees)
-      password: ['', this.isEditMode ? [] : [Validators.required, Validators.minLength(8)]]
+      password: [''] // No validators here initially
     });
   }
 
@@ -250,6 +306,19 @@ export class EmployeeFormComponent implements OnInit {
     const employeeData = { ...this.employeeForm.value };
     
     console.log('🔍 DEBUG: Raw form data before sanitization:', JSON.stringify(employeeData, null, 2));
+    
+    // Convert dates from yyyy-MM-dd back to ISO format for backend
+    if (employeeData.birthdate && typeof employeeData.birthdate === 'string') {
+      // Convert yyyy-MM-dd to ISO string (assume UTC)
+      employeeData.birthdate = new Date(employeeData.birthdate + 'T00:00:00Z').toISOString();
+      console.log('📅 Converted birthdate for submission:', employeeData.birthdate);
+    }
+    
+    if (employeeData.joiningDate && typeof employeeData.joiningDate === 'string') {
+      // Convert yyyy-MM-dd to ISO string (assume UTC)
+      employeeData.joiningDate = new Date(employeeData.joiningDate + 'T00:00:00Z').toISOString();
+      console.log('📅 Converted joiningDate for submission:', employeeData.joiningDate);
+    }
     
     // Clean and sanitize data before submission
     // 1. Extract companyId as string (handle object with _id)

@@ -5,6 +5,7 @@
  * @module services/dashboardService
  */
 
+const mongoose = require('mongoose');
 const Employee = require('../schemas/employee');
 const Attendance = require('../schemas/attendance');
 const LeaveRequest = require('../schemas/leaveRequest');
@@ -75,7 +76,7 @@ const getAdminDashboard = async (companyId) => {
   const projectBudgets = await Project.aggregate([
     { 
       $match: { 
-        companyId: new require('mongoose').Types.ObjectId(companyId), 
+        companyId: new mongoose.Types.ObjectId(companyId), 
         isDeleted: false 
       } 
     },
@@ -154,7 +155,7 @@ const getHRDashboard = async (companyId) => {
   });
 
   const leavesByType = await LeaveRequest.aggregate([
-    { $match: { companyId: new require('mongoose').Types.ObjectId(companyId) } },
+    { $match: { companyId: new mongoose.Types.ObjectId(companyId) } },
     { $group: { _id: '$leaveType', count: { $sum: 1 } } }
   ]);
 
@@ -264,8 +265,8 @@ const getManagerDashboard = async (managerId, companyId) => {
   const upcomingDeadlines = await Project.aggregate([
     {
       $match: {
-        companyId: new require('mongoose').Types.ObjectId(companyId),
-        managerId: new require('mongoose').Types.ObjectId(managerId),
+        companyId: new mongoose.Types.ObjectId(companyId),
+        managerId: new mongoose.Types.ObjectId(managerId),
         status: 'Active',
         isDeleted: false
       }
@@ -294,8 +295,8 @@ const getManagerDashboard = async (managerId, companyId) => {
   const projectBudgets = await Project.aggregate([
     {
       $match: {
-        companyId: new require('mongoose').Types.ObjectId(companyId),
-        managerId: new require('mongoose').Types.ObjectId(managerId),
+        companyId: new mongoose.Types.ObjectId(companyId),
+        managerId: new mongoose.Types.ObjectId(managerId),
         isDeleted: false
       }
     },

@@ -80,7 +80,7 @@ const employeeSchema = new mongoose.Schema({
   // Employment Details
   status: { 
     type: String, 
-    enum: ['Active', 'Probation', 'Notice Period', 'Terminated', 'Resigned', 'On Leave'], 
+    enum: ['Active', 'Probation', 'Notice Period', 'Terminated', 'Resigned', 'On Leave', 'Inactive'], 
     default: 'Active',
     index: true
   },

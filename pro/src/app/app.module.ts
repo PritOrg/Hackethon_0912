@@ -2,13 +2,11 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
 import { EmployeeListComponent } from './employee-list/employee-list.component';
-import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
 import { CompanySignUpComponent } from './company-sign-up/company-sign-up.component';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { LeaveRequestAdminComponent } from './leave-request-admin/leave-request-admin.component';
@@ -26,9 +24,7 @@ import { LayoutModule } from './layout/layout.module';
 @NgModule({
   declarations: [
     AppComponent,
-    DashboardComponent,
     EmployeeListComponent,
-    AdminLayoutComponent,
     CompanySignUpComponent,
     SignInComponent,
     LeaveRequestAdminComponent,
@@ -40,6 +36,7 @@ import { LayoutModule } from './layout/layout.module';
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
+    FormsModule,
     AuthModule,
     LayoutModule
   ],

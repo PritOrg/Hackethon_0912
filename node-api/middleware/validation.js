@@ -86,24 +86,50 @@ const schemas = {
   }),
 
   updateEmployee: Joi.object({
-    username: Joi.string().min(3).max(30),
+    username: Joi.string().min(3).max(30).allow('', null),
     email: Joi.string().email(),
     firstName: Joi.string(),
     middleName: Joi.string().allow('', null),
     lastName: Joi.string(),
     birthdate: Joi.date(),
-    role: Joi.string(),
+    role: Joi.string().valid('Admin', 'HR', 'Manager', 'Employee'),
+    designation: Joi.string(),
+    joiningDate: Joi.date(),
     expertise: Joi.array().items(Joi.string()),
     projects: Joi.array().items(Joi.string()),
     profilePic: Joi.string().allow('', null),
     achievements: Joi.array().items(Joi.string()),
-    jobShift: Joi.string(),
+    jobShift: Joi.string().valid('Morning', 'Evening', 'Night', 'Flexible'),
     phoneNumber: Joi.string(),
-    address: Joi.string(),
-    emergencyContact: Joi.string(),
-    department: Joi.string(),
-    position: Joi.string(),
-    salary: Joi.number().positive(),
+    address: Joi.object({
+      street: Joi.string().allow('', null),
+      city: Joi.string().allow('', null),
+      state: Joi.string().allow('', null),
+      zipCode: Joi.string().allow('', null),
+      country: Joi.string().allow('', null)
+    }),
+    emergencyContact: Joi.object({
+      name: Joi.string().allow('', null),
+      relationship: Joi.string().allow('', null),
+      phoneNumber: Joi.string().allow('', null),
+      email: Joi.string().email().allow('', null)
+    }),
+    department: Joi.string().allow('', null),
+    position: Joi.string().allow('', null),
+    status: Joi.string().valid('Active', 'Probation', 'Notice Period', 'Terminated', 'Resigned', 'On Leave'),
+    employmentType: Joi.string().valid('Full-Time', 'Part-Time', 'Contract', 'Intern'),
+    salary: Joi.object({
+      amount: Joi.number().positive(),
+      currency: Joi.string(),
+      structure: Joi.string().valid('Hourly', 'Fixed', 'Contract'),
+      breakdown: Joi.object({
+        basic: Joi.number().allow(null),
+        hra: Joi.number().allow(null),
+        allowances: Joi.number().allow(null),
+        bonus: Joi.number().allow(null),
+        deductions: Joi.number().allow(null)
+      })
+    })
   }).min(1), // At least one field required
 
   // Login validation
